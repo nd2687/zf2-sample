@@ -10,5 +10,8 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zendframework": "~2.4.11"
+    },
+    "require-dev": {
+        "zendframework/zend-developer-tools": "1.0.0"
     }
 }
