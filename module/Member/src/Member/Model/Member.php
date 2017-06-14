@@ -1,11 +1,11 @@
 <?php
-namespace Album\Model;
+namespace Member\Model;
 
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 
-class Album implements InputFilterAwareInterface
+class Member implements InputFilterAwareInterface
 {
     public $id;
     public $artist;

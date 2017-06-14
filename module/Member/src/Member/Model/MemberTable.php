@@ -1,9 +1,9 @@
 <?php
-namespace Album\Model;
+namespace Member\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 
-class AlbumTable
+class MemberTable
 {
     protected $tableGateway;
 
@@ -18,7 +18,7 @@ class AlbumTable
         return $resultSet;
     }
 
-    public function getAlbum($id)
+    public function getMember($id)
     {
         $id  = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
@@ -29,18 +29,18 @@ class AlbumTable
         return $row;
     }
 
-    public function saveAlbum(Album $album)
+    public function saveMember(Member $member)
     {
         $data = array(
-            'artist' => $album->artist,
-            'title'  => $album->title,
+            'artist' => $member->artist,
+            'title'  => $member->title,
         );
 
-        $id = (int)$album->id;
+        $id = (int)$member->id;
         if ($id == 0) {
             $this->tableGateway->insert($data);
         } else {
-            if ($this->getAlbum($id)) {
+            if ($this->getMember($id)) {
                 $this->tableGateway->update($data, array('id' => $id));
             } else {
                 throw new \Exception('Form id does not exist');
@@ -48,7 +48,7 @@ class AlbumTable
         }
     }
 
-    public function deleteAlbum($id)
+    public function deleteMember($id)
     {
         $this->tableGateway->delete(array('id' => $id));
     }
