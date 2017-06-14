@@ -4,11 +4,13 @@ namespace Member\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Member\Model\Member;
+use Member\Model\BusinessClassification;
 use Member\Form\MemberForm;
 
 class MemberController extends AbstractActionController
 {
     protected $memberTable;
+    protected $business_classificationTable;
 
     public function indexAction()
     {
@@ -29,85 +31,88 @@ class MemberController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $member->exchangeArray($form->getData());
+                // $member->exchangeArray($form->getData());
                 $this->getMemberTable()->saveMember($member);
 
                 // Redirect to list of members
                 return $this->redirect()->toRoute('member');
             }
         }
-        return array('form' => $form);
-    }
-
-    public function editAction()
-    {
-        $id = (int) $this->params()->fromRoute('id', 0);
-        if (!$id) {
-            return $this->redirect()->toRoute('member', array(
-                'action' => 'add'
-            ));
-        }
-
-        // Get the Member with the specified id.  An exception is thrown
-        // if it cannot be found, in which case go to the index page.
-        try {
-            $member = $this->getMemberTable()->getMember($id);
-        }
-        catch (\Exception $ex) {
-            return $this->redirect()->toRoute('member', array(
-                'action' => 'index'
-            ));
-        }
-
-        $form  = new MemberForm();
-        $form->bind($member);
-        $form->get('submit')->setAttribute('value', 'Edit');
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $form->setInputFilter($member->getInputFilter());
-            $form->setData($request->getPost());
-
-            if ($form->isValid()) {
-                $this->getMemberTable()->saveMember($member);
-
-                // Redirect to list of members
-                return $this->redirect()->toRoute('member');
-            }
-        }
-
         return array(
-            'id' => $id,
             'form' => $form,
+            'business_classifications' => $this->getBusinessClassificationTable()->fetchAll(),
         );
     }
 
-    public function deleteAction()
-    {
-        $id = (int) $this->params()->fromRoute('id', 0);
-        if (!$id) {
-            return $this->redirect()->toRoute('member');
-        }
-
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            $del = $request->getPost('del', 'No');
-
-            if ($del == 'Yes') {
-                $id = (int) $request->getPost('id');
-                $this->getMemberTable()->deleteMember($id);
-            }
-
-            // Redirect to list of members
-            return $this->redirect()->toRoute('member');
-        }
-
-        return array(
-            'id'    => $id,
-            'member' => $this->getMemberTable()->getMember($id)
-        );
-    }
-
+    // public function editAction()
+    // {
+    //     $id = (int) $this->params()->fromRoute('id', 0);
+    //     if (!$id) {
+    //         return $this->redirect()->toRoute('member', array(
+    //             'action' => 'add'
+    //         ));
+    //     }
+    //
+    //     // Get the Member with the specified id.  An exception is thrown
+    //     // if it cannot be found, in which case go to the index page.
+    //     try {
+    //         $member = $this->getMemberTable()->getMember($id);
+    //     }
+    //     catch (\Exception $ex) {
+    //         return $this->redirect()->toRoute('member', array(
+    //             'action' => 'index'
+    //         ));
+    //     }
+    //
+    //     $form  = new MemberForm();
+    //     $form->bind($member);
+    //     $form->get('submit')->setAttribute('value', 'Edit');
+    //
+    //     $request = $this->getRequest();
+    //     if ($request->isPost()) {
+    //         $form->setInputFilter($member->getInputFilter());
+    //         $form->setData($request->getPost());
+    //
+    //         if ($form->isValid()) {
+    //             $this->getMemberTable()->saveMember($member);
+    //
+    //             // Redirect to list of members
+    //             return $this->redirect()->toRoute('member');
+    //         }
+    //     }
+    //
+    //     return array(
+    //         'id' => $id,
+    //         'form' => $form,
+    //     );
+    // }
+    //
+    // public function deleteAction()
+    // {
+    //     $id = (int) $this->params()->fromRoute('id', 0);
+    //     if (!$id) {
+    //         return $this->redirect()->toRoute('member');
+    //     }
+    //
+    //     $request = $this->getRequest();
+    //     if ($request->isPost()) {
+    //         $del = $request->getPost('del', 'No');
+    //
+    //         if ($del == 'Yes') {
+    //             $id = (int) $request->getPost('id');
+    //             $this->getMemberTable()->deleteMember($id);
+    //         }
+    //
+    //         // Redirect to list of members
+    //         return $this->redirect()->toRoute('member');
+    //     }
+    //
+    //     return array(
+    //         'id'    => $id,
+    //         'member' => $this->getMemberTable()->getMember($id)
+    //     );
+    // }
+    //
     public function getMemberTable()
     {
         if (!$this->memberTable) {
@@ -115,6 +120,15 @@ class MemberController extends AbstractActionController
             $this->memberTable = $sm->get('Member\Model\MemberTable');
         }
         return $this->memberTable;
+    }
+
+    public function getBusinessClassificationTable()
+    {
+        if (!$this->business_classificationTable) {
+            $sm = $this->getServiceLocator();
+            $this->business_classificationTable = $sm->get('Member\Model\BusinessClassificationTable');
+        }
+        return $this->business_classificationTable;
     }
 }
 

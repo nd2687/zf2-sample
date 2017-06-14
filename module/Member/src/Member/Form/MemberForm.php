@@ -15,24 +15,69 @@ class MemberForm extends Form
             'type' => 'Hidden',
         ));
         $this->add(array(
-            'name' => 'title',
+            'name' => 'login_id',
             'type' => 'Text',
             'options' => array(
-                'label' => 'Title',
+                'label' => 'ログインID',
             ),
         ));
         $this->add(array(
-            'name' => 'artist',
+            'name' => 'password',
+            'type' => 'Password',
+            'options' => array(
+                'label' => 'パスワード',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'password_confirmation',
+            'type' => 'Password',
+            'options' => array(
+                'label' => 'パスワード(確認)',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'name',
             'type' => 'Text',
             'options' => array(
-                'label' => 'Artist',
+                'label' => '氏名',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'name_kana',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '氏名(かな)',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'mail_address',
+            'type' => 'Email',
+            'options' => array(
+                'label' => 'メールアドレス',
+            ),
+        ));
+        $this->add(array(
+            'name' => 'birthday',
+            'type' => 'Text',
+            'options' => array(
+                'label' => '生年月日',
+            ),
+        ));
+        $this->add(array(
+          'name' => 'business_classification_id',
+          'type' => 'Select',
+          'attributes' => array(
+            'id' => 'business_classification_id',
+          ),
+            'options' => array(
+                'label' => '業種',
             ),
         ));
         $this->add(array(
             'name' => 'submit',
             'type' => 'Submit',
             'attributes' => array(
-                'value' => 'Go',
+                'value' => '登録',
                 'id' => 'submitbutton',
             ),
         ));

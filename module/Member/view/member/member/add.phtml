@@ -9,7 +9,20 @@ $form->prepare();
 
 echo $this->form()->openTag($form);
 echo $this->formHidden($form->get('id'));
-echo $this->formRow($form->get('title'));
-echo $this->formRow($form->get('artist'));
+echo $this->formRow($form->get('login_id'));
+echo $this->formRow($form->get('password'));
+echo $this->formRow($form->get('password_confirmation'));
+echo $this->formRow($form->get('name'));
+echo $this->formRow($form->get('name_kana'));
+echo $this->formRow($form->get('mail_address'));
+echo $this->formRow($form->get('birthday'));
+
+$bc_ary = [];
+foreach($business_classifications as $bc){
+  $bc_ary[$bc->id] = $bc->name;
+}
+echo $this->formRow($form->get('business_classification_id')->setAttribute(
+            'options', $bc_ary
+));
 echo $this->formSubmit($form->get('submit'));
 echo $this->form()->closeTag();
