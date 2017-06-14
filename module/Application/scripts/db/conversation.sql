@@ -1,7 +1,5 @@
---カンバセーションテーブル
-
-DROP TABLE IF EXISTS `conversation`;
-CREATE TABLE `conversation` (
+DROP TABLE IF EXISTS `sample`.`conversation`;
+CREATE TABLE `sample`.`conversation` (
   `id`              varchar(40) NOT NULL,
   `session_id`      varchar(40) NOT NULL,
   `data`  blob,

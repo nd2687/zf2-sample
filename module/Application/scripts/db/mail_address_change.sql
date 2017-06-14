@@ -1,7 +1,5 @@
---仮登録テーブル
-
-DROP TABLE IF EXISTS `mail_address_change`;
-CREATE TABLE `mail_address_change` (
+DROP TABLE IF EXISTS `sample`.`mail_address_change`;
+CREATE TABLE `sample`.`mail_address_change` (
   `id`                          varchar(32)         NOT NULL,
   `member_id`                   int(4)              NOT NULL,
   `mail_address`                varchar(254) BINARY NOT NULL,

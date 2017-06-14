@@ -1,7 +1,5 @@
---会員テーブル
-
-DROP TABLE IF EXISTS `member`;
-CREATE TABLE `member` (
+DROP TABLE IF EXISTS `sample`.`member`;
+CREATE TABLE `sample`.`member` (
   `id`                         int(4) NOT NULL AUTO_INCREMENT,
   `login_id`                   varchar(30) BINARY NOT NULL,
   `password`                   varchar(128) BINARY NOT NULL,

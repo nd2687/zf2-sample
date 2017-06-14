@@ -1,7 +1,5 @@
---業種テーブル
-
-DROP TABLE IF EXISTS `business_classification`;
-CREATE TABLE `business_classification` (
+DROP TABLE IF EXISTS `sample`.`business_classification`;
+CREATE TABLE `sample`.`business_classification` (
   `id`                          int(4) NOT NULL,
   `name`                        varchar(30)  NOT NULL,
   `parent_id`                   int(4),
@@ -10,7 +8,7 @@ CREATE TABLE `business_classification` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO business_classification (id, name, parent_id) VALUES
+INSERT INTO `sample`.`business_classification` (id, name, parent_id) VALUES
 (1,'農林水産・鉱業',0),
 (2,'建設',0),
 (3,'自動車、輸送機器',0),
