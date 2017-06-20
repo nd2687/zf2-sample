@@ -1,9 +1,9 @@
 <?php
 namespace Member\Model;
 
-// use Zend\InputFilter\InputFilter;
-// use Zend\InputFilter\InputFilterAwareInterface;
-// use Zend\InputFilter\InputFilterInterface;
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
 
 class Member // implements InputFilterAwareInterface
 {
@@ -41,60 +41,136 @@ class Member // implements InputFilterAwareInterface
     //     throw new \Exception("Not used");
     // }
 
-    // public function getInputFilter()
-    // {
-    //     if (!$this->inputFilter) {
-    //         $inputFilter = new InputFilter();
-    //
-    //         $inputFilter->add(array(
-    //             'name'     => 'id',
-    //             'required' => true,
-    //             'filters'  => array(
-    //                 array('name' => 'Int'),
-    //             ),
-    //         ));
-    //
-    //         $inputFilter->add(array(
-    //             'name'     => 'artist',
-    //             'required' => true,
-    //             'filters'  => array(
-    //                 array('name' => 'StripTags'),
-    //                 array('name' => 'StringTrim'),
-    //             ),
-    //             'validators' => array(
-    //                 array(
-    //                     'name'    => 'StringLength',
-    //                     'options' => array(
-    //                         'encoding' => 'UTF-8',
-    //                         'min'      => 1,
-    //                         'max'      => 100,
-    //                     ),
-    //                 ),
-    //             ),
-    //         ));
-    //
-    //         $inputFilter->add(array(
-    //             'name'     => 'title',
-    //             'required' => true,
-    //             'filters'  => array(
-    //                 array('name' => 'StripTags'),
-    //                 array('name' => 'StringTrim'),
-    //             ),
-    //             'validators' => array(
-    //                 array(
-    //                     'name'    => 'StringLength',
-    //                     'options' => array(
-    //                         'encoding' => 'UTF-8',
-    //                         'min'      => 1,
-    //                         'max'      => 100,
-    //                     ),
-    //                 ),
-    //             ),
-    //         ));
-    //
-    //         $this->inputFilter = $inputFilter;
-    //     }
-    //
-    //     return $this->inputFilter;
-    // }
+    public function getInputFilter()
+    {
+        if (!$this->inputFilter) {
+            $inputFilter = new InputFilter();
+
+            $inputFilter->add(array(
+                'name'     => 'id',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'Int'),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'login_id',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'name',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'name_kana',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'mail_address',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'password',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $inputFilter->add(array(
+                'name'     => 'password_confirmation',
+                'required' => true,
+                'filters'  => array(
+                    array('name' => 'StripTags'),
+                    array('name' => 'StringTrim'),
+                ),
+                'validators' => array(
+                    array(
+                        'name'    => 'StringLength',
+                        'options' => array(
+                            'encoding' => 'UTF-8',
+                            'min'      => 1,
+                            'max'      => 20,
+                        ),
+                    ),
+                ),
+            ));
+
+            $this->inputFilter = $inputFilter;
+        }
+
+        return $this->inputFilter;
+    }
 }

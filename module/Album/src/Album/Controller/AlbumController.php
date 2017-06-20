@@ -12,8 +12,10 @@ class AlbumController extends AbstractActionController
 
     public function indexAction()
     {
+        $postData = $this->params()->fromPost();
         return new ViewModel(array(
             'albums' => $this->getAlbumTable()->fetchAll(),
+            'postData' => $postData
         ));
     }
 

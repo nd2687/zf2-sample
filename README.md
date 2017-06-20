@@ -75,3 +75,12 @@ project and you should be ready to go! It should look something like below:
             Allow from all
         </Directory>
     </VirtualHost>
+
+
+### Tips
+
+エラーログをみる
+
+```
+error_log(print_r('****'."\n",true),3,'./logs/debug.log');
+```

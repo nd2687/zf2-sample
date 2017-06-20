@@ -28,12 +28,17 @@ class MemberTable
     //     }
     //     return $row;
     // }
-    //
+
     // public function saveMember(Member $member)
     // {
     //     $data = array(
-    //         'artist' => $member->artist,
-    //         'title'  => $member->title,
+    //         'login_id' => $member->login_id,
+    //         'password'  => $member->password,
+    //         'name' => $member->name,
+    //         'name_kana' => $member->name_kana,
+    //         'mail_address' => $member->mail_address,
+    //         'birthday' => $member->birthday,
+    //         'business_classification_id' => $member->business_classification_id,
     //     );
     //
     //     $id = (int)$member->id;

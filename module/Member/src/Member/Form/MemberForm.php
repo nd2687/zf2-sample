@@ -1,7 +1,9 @@
 <?php
 namespace Member\Form;
 
+use Zend\Form\Element;
 use Zend\Form\Form;
+use Zend\Validator\Explode as ExplodeValidator;
 
 class MemberForm extends Form
 {
@@ -58,9 +60,12 @@ class MemberForm extends Form
         ));
         $this->add(array(
             'name' => 'birthday',
-            'type' => 'Text',
+            'type' => 'Zend\Form\Element\Date',
             'options' => array(
                 'label' => '生年月日',
+                'render_delimiters' => false,
+                'min_year'  => date('Y'),
+                'max_year' => date('Y') + 5
             ),
         ));
         $this->add(array(
@@ -71,6 +76,7 @@ class MemberForm extends Form
           ),
             'options' => array(
                 'label' => '業種',
+                'disable_inarray_validator' => true,
             ),
         ));
         $this->add(array(

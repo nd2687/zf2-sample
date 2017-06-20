@@ -22,26 +22,54 @@ class MemberController extends AbstractActionController
     public function addAction()
     {
         $form = new MemberForm();
-        $form->get('submit')->setValue('Add');
+        $form->get('submit')->setValue('登録');
+        $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
+        $bc_ary = [];
+        foreach($business_classifications as $bc){
+            $bc_ary[$bc->id] = $bc->name;
+        }
+        return array(
+            'form' => $form,
+            'bc_ary' => $bc_ary,
+        );
+    }
 
+    public function confirmAction()
+    {
+        $form = new MemberForm();
+        $form->get('submit')->setValue('登録');
+        $postData = $this->params()->fromPost();
+        $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
         $request = $this->getRequest();
         if ($request->isPost()) {
             $member = new Member();
             $form->setInputFilter($member->getInputFilter());
             $form->setData($request->getPost());
-
             if ($form->isValid()) {
                 // $member->exchangeArray($form->getData());
-                $this->getMemberTable()->saveMember($member);
-
-                // Redirect to list of members
-                return $this->redirect()->toRoute('member');
+                // $this->getMemberTable()->saveMember($member);
+                return array(
+                    'form' => $form,
+                    'postData' => $postData,
+                    'business_classification' => $business_classification
+                );
+            } else {
+                $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
+                $bc_ary = [];
+                foreach($business_classifications as $bc){
+                    $bc_ary[$bc->id] = $bc->name;
+                }
+                $view = new ViewModel([
+                    'form' => $form,
+                    'business_classification' => $business_classification,
+                    'bc_ary' => $bc_ary
+                ]);
+                $view->setTemplate('member/member/add.phtml');
+                return $view;
             }
         }
-        return array(
-            'form' => $form,
-            'business_classifications' => $this->getBusinessClassificationTable()->fetchAll(),
-        );
+
+        return ['form' => $form];
     }
 
     // public function editAction()
