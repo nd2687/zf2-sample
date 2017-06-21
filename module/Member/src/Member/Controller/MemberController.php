@@ -23,15 +23,11 @@ class MemberController extends AbstractActionController
     {
         $form = new MemberForm();
         $form->get('submit')->setValue('登録');
-        $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
         $postData = $this->params()->fromPost();
         if(!empty($postData)) {
           $form->setData($postData);
         }
-        $bc_ary = [];
-        foreach($business_classifications as $bc){
-            $bc_ary[$bc->id] = $bc->name;
-        }
+        $bc_ary = $this->getArrayBusinessClassification();
         return array(
             'form' => $form,
             'bc_ary' => $bc_ary,
@@ -58,11 +54,7 @@ class MemberController extends AbstractActionController
                 'business_classification' => $business_classification
             );
         } else {
-            $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
-            $bc_ary = [];
-            foreach($business_classifications as $bc){
-                $bc_ary[$bc->id] = $bc->name;
-            }
+            $bc_ary = $this->getArrayBusinessClassification();
             $view = new ViewModel([
                 'form' => $form,
                 'business_classification' => $business_classification,
@@ -163,6 +155,16 @@ class MemberController extends AbstractActionController
             $this->business_classificationTable = $sm->get('Member\Model\BusinessClassificationTable');
         }
         return $this->business_classificationTable;
+    }
+
+    private function getArrayBusinessClassification()
+    {
+        $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
+        $bc_ary = [];
+        foreach($business_classifications as $bc){
+            $bc_ary[$bc->id] = $bc->name;
+        }
+        return $bc_ary;
     }
 }
 
