@@ -24,6 +24,10 @@ class MemberController extends AbstractActionController
         $form = new MemberForm();
         $form->get('submit')->setValue('登録');
         $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
+        $postData = $this->params()->fromPost();
+        if(!empty($postData)) {
+          $form->setData($postData);
+        }
         $bc_ary = [];
         foreach($business_classifications as $bc){
             $bc_ary[$bc->id] = $bc->name;
@@ -31,6 +35,7 @@ class MemberController extends AbstractActionController
         return array(
             'form' => $form,
             'bc_ary' => $bc_ary,
+            'postData' => $postData
         );
     }
 
@@ -41,37 +46,38 @@ class MemberController extends AbstractActionController
         $postData = $this->params()->fromPost();
         $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
         $request = $this->getRequest();
-        if ($request->isPost()) {
-            $member = new Member();
-            $form->setInputFilter($member->getInputFilter());
-            $form->setData($request->getPost());
-            if ($form->isValid()) {
-                // $member->exchangeArray($form->getData());
-                // $this->getMemberTable()->saveMember($member);
-                return array(
-                    'form' => $form,
-                    'postData' => $postData,
-                    'business_classification' => $business_classification
-                );
-            } else {
-                $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
-                $bc_ary = [];
-                foreach($business_classifications as $bc){
-                    $bc_ary[$bc->id] = $bc->name;
-                }
-                $view = new ViewModel([
-                    'form' => $form,
-                    'business_classification' => $business_classification,
-                    'bc_ary' => $bc_ary
-                ]);
-                $view->setTemplate('member/member/add.phtml');
-                return $view;
+        $member = new Member();
+        $form->setInputFilter($member->getInputFilter());
+        $form->setData($request->getPost());
+        if ($form->isValid()) {
+            // $member->exchangeArray($form->getData());
+            // $this->getMemberTable()->saveMember($member);
+            return array(
+                'form' => $form,
+                'postData' => $postData,
+                'business_classification' => $business_classification
+            );
+        } else {
+            $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
+            $bc_ary = [];
+            foreach($business_classifications as $bc){
+                $bc_ary[$bc->id] = $bc->name;
             }
+            $view = new ViewModel([
+                'form' => $form,
+                'business_classification' => $business_classification,
+                'bc_ary' => $bc_ary
+            ]);
+            $view->setTemplate('member/member/add.phtml');
+            return $view;
         }
-
         return ['form' => $form];
     }
 
+    public function completeAction() {
+        $postData = $this->params()->fromPost();
+        return ['postData' => $postData];
+    }
     // public function editAction()
     // {
     //     $id = (int) $this->params()->fromRoute('id', 0);
