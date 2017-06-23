@@ -7,6 +7,7 @@ return array(
         'ZendDeveloperTools',
         'Blog',
         'Member',
+        'ZfcTwig',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

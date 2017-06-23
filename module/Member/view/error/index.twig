@@ -1,0 +1,9 @@
+{% extends 'layout/layout.twig' %}
+{% block content %}
+  <h1>{{ message }}</h1>
+  {%  if display_exceptions %}
+  <pre>
+    {{ exception }}
+  </pre>
+  {% endif %}
+{% endblock %}

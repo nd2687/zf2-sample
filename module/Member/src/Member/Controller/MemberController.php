@@ -3,7 +3,9 @@ namespace Member\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\InputFilter\Factory;
 use Member\Model\Member;
+use Member\Model\Add;
 use Member\Model\BusinessClassification;
 use Member\Form\MemberForm;
 
@@ -21,55 +23,55 @@ class MemberController extends AbstractActionController
 
     public function addAction()
     {
-        $form = new MemberForm();
-        $form->get('submit')->setValue('登録');
+        $inputs = $this->createInputFilter();
         $postData = $this->params()->fromPost();
         if(!empty($postData)) {
-          $form->setData($postData);
+            $inputs->setData($postData);
         }
         $bc_ary = $this->getArrayBusinessClassification();
         return array(
-            'form' => $form,
+            'inputs' => $inputs->getInputs(),
             'bc_ary' => $bc_ary,
-            'postData' => $postData
+            'postData' => $postData,
         );
     }
 
     public function confirmAction()
     {
-        $form = new MemberForm();
-        $form->get('submit')->setValue('登録');
+        $inputs = $this->createInputFilter();
         $postData = $this->params()->fromPost();
-        $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
-        $request = $this->getRequest();
+        $inputs->setData($postData);
+
+        $business_classification = '';
+        if(!empty($postData) && !empty($postData["business_classification_id"])) {
+            $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
+        }
         $member = new Member();
-        $form->setInputFilter($member->getInputFilter());
-        $form->setData($request->getPost());
-        if ($form->isValid()) {
+        if ($inputs->isValid()) {
             // $member->exchangeArray($form->getData());
             // $this->getMemberTable()->saveMember($member);
             return array(
-                'form' => $form,
-                'postData' => $postData,
+                'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification
             );
         } else {
             $bc_ary = $this->getArrayBusinessClassification();
             $view = new ViewModel([
-                'form' => $form,
+                'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification,
-                'bc_ary' => $bc_ary
+                'bc_ary' => $bc_ary,
             ]);
-            $view->setTemplate('member/member/add.phtml');
+            $view->setTemplate('member/member/add.twig');
             return $view;
         }
-        return ['form' => $form];
+        return ['Message' => 'Method Not Allowed.'];
     }
 
     public function completeAction() {
         $postData = $this->params()->fromPost();
         return ['postData' => $postData];
     }
+
     // public function editAction()
     // {
     //     $id = (int) $this->params()->fromRoute('id', 0);
@@ -165,6 +167,19 @@ class MemberController extends AbstractActionController
             $bc_ary[$bc->id] = $bc->name;
         }
         return $bc_ary;
+    }
+
+    private function createInputFilter()
+    {
+        $spec = $this->getAddService()->getInputSpec();
+        $factory = new Factory();
+        $inputs = $factory->createInputFilter($spec);
+        return $inputs;
+    }
+
+    private function getAddService()
+    {
+        return $this->getServiceLocator()->get('AddService');
     }
 }
 

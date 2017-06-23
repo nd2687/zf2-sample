@@ -1,0 +1,9 @@
+{% extends 'layout/layout.twig' %}
+{% block content %}
+    <h1>ページが見つかりません</h1>
+  {% if display_exceptions and exception is not empty %}
+    <pre>{{ exception }}</pre>
+  {% endif %}
+  {% if reason is not empty%}{{ reason }}{% endif %}
+
+{% endblock %}

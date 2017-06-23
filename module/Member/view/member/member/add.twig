@@ -1,0 +1,114 @@
+{% extends 'layout/layout.twig' %}
+
+{% block content %}
+<div class="row">
+    <h1>会員登録</h1>
+    <form action="/member/confirm" method='post'>
+        <table border="0">
+            <tr>
+                <td align="right"><b>ログイン名</b></td>
+                <td><input type="text" name="{{ inputs.login_id.name }}" value="{{ inputs.login_id.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.login_id.messages is not empty %}
+                {% for message in inputs.login_id.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>パスワード</b></td>
+                <td><input type="password" name="{{ inputs.password.name }}" value="{{ inputs.password.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.password.messages is not empty %}
+                {% for message in inputs.password.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>パスワード（確認）</b></td>
+                <td><input type="password" name="{{ inputs.password_confirmation.name }}" value="{{ inputs.password_confirmation.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.password_confirmation.messages is not empty %}
+                {% for message in inputs.password_confirmation.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>氏名</b></td>
+                <td><input type="text" name="{{ inputs.name.name }}" value="{{ inputs.name.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.name.messages is not empty %}
+                {% for message in inputs.name.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>氏名（かな）</b></td>
+                <td><input type="text" name="{{ inputs.name_kana.name }}" value="{{ inputs.name_kana.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.name_kana.messages is not empty %}
+                {% for message in inputs.name_kana.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>メールアドレス</b></td>
+                <td><input type="email" name="{{ inputs.mail_address.name }}" value="{{ inputs.mail_address.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.mail_address.messages is not empty %}
+                {% for message in inputs.mail_address.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>生年月日</b></td>
+                <td><input type="date" name="{{ inputs.birthday.name }}" value="{{ inputs.birthday.rawValue }}"></input></td>
+            </tr>
+            <td></td>
+            {% if inputs.birthday.messages is not empty %}
+                {% for message in inputs.birthday.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td align="right"><b>業種</b></td>
+                <td>
+                    <select type="select" name="{{ inputs.business_classification_id.name }}">
+                        <option value="">選択してください</option>
+                        {% for key, value in bc_ary %}
+                            {% if inputs.business_classification_id.rawValue == key %}
+                                <option value="{{ key }}" selected="true">{{ value }}</option>
+                            {% else %}
+                                <option value="{{ key }}">{{ value }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <td></td>
+            {% if inputs.business_classification_id.messages is not empty %}
+                {% for message in inputs.business_classification_id.messages %}
+                <td><b>{{ message }}</b></td>
+                {% endfor %}
+            {% endif %}
+
+            <tr>
+                <td></td>
+                <td><input type="submit" value="送信"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+{% endblock content %}

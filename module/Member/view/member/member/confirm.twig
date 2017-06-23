@@ -1,0 +1,56 @@
+{% extends 'layout/layout.twig' %}
+
+{% block content %}
+<div class="row">
+    <h1>会員登録確認</h1>
+    <table border="0">
+        <tr>
+            <td align="right"><b>ログイン名</b></td>
+            <td>{{ inputs.login_id.rawValue }}</td>
+        </tr>
+        <tr>
+            <td align="right"><b>氏名</b></td>
+            <td>{{ inputs.name.rawValue }}</td>
+        </tr>
+        <tr>
+            <td align="right"><b>氏名（かな）</b></td>
+            <td>{{ inputs.name_kana.rawValue }}</td>
+        </tr>
+        <tr>
+            <td align="right"><b>メールアドレス</b></td>
+            <td>{{ inputs.mail_address.rawValue }}</td>
+        </tr>
+        <tr>
+            <td align="right"><b>生年月日</b></td>
+            <td>{{ inputs.birthday.rawValue }}</td>
+        </tr>
+        <tr>
+            <td align="right"><b>業種</b></td>
+            <td>{{ business_classification.name }}</td>
+        </tr>
+    </table>
+
+    <form method="POST" name="member" action="/member/complete" id="member">
+        <input type="hidden" name={{ inputs.login_id.name }} value={{ inputs.login_id.rawValue }}></input>
+        <input type="hidden" name={{ inputs.name.name }} value={{ inputs.name.rawValue }}></input>
+        <input type="hidden" name={{ inputs.name_kana.name }} value={{ inputs.name_kana.rawValue }}></input>
+        <input type="hidden" name={{ inputs.mail_address.name }} value={{ inputs.mail_address.rawValue }}></input>
+        <input type="hidden" name={{ inputs.birthday.name }} value={{ inputs.birthday.rawValue }}></input>
+        <input type="hidden" name={{ inputs.password.name }} value={{ inputs.password.rawValue }}></input>
+        <input type="hidden" name={{ inputs.password_confirmation.name }} value={{ inputs.password_confirmation.rawValue }}></input>
+        <input type="hidden" name={{ inputs.business_classification_id.name }} value={{ inputs.business_classification_id.rawValue }}></input>
+        <p>
+            <button class="submit" data-action="/member/add">戻る</button>
+            <button class="submit" data-action="/member/complete">登録</button>
+        </p>
+    </form>
+</div>
+
+<script>
+    $('.submit').click(function() {
+      $(this).parents('form').attr('action', $(this).data('action'));
+      $(this).parents('form').submit();
+    });
+</script>
+
+{% endblock content %}

@@ -26,6 +26,16 @@ return array(
         ),
     ),
 
+    'service_manager' => array(
+        'abstract_factories' => array(
+            'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
+            'Zend\Log\LoggerAbstractServiceFactory',
+        ),
+        'invokables' => [
+            'AddService' => \Member\Model\Add\AddService::class,
+        ],
+    ),
+
     'view_manager' => array(
         // 'template_map' => array(
         //     'layout/layout' => __DIR__ . '/../view/layout/layout.phtml'
