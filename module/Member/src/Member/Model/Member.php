@@ -20,7 +20,6 @@ class Member // implements InputFilterAwareInterface
 
     public function exchangeArray($data)
     {
-        $this->id     = (!empty($data['id'])) ? $data['id'] : null;
         $this->login_id = (!empty($data['login_id'])) ? $data['login_id'] : null;
         $this->password  = (!empty($data['password'])) ? $data['password'] : null;
         $this->password_confirmation  = (!empty($data['password_confirmation'])) ? $data['password_confirmation'] : null;

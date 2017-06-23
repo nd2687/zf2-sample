@@ -8,11 +8,14 @@ use Member\Model\Member;
 use Member\Model\Add;
 use Member\Model\BusinessClassification;
 use Member\Form\MemberForm;
+use Member\Model\Add\AddService;
+use Member\Model\Member\MemberTable;
 
 class MemberController extends AbstractActionController
 {
     protected $memberTable;
     protected $business_classificationTable;
+    protected $addService;
 
     public function indexAction()
     {
@@ -48,8 +51,8 @@ class MemberController extends AbstractActionController
         }
         $member = new Member();
         if ($inputs->isValid()) {
-            // $member->exchangeArray($form->getData());
-            // $this->getMemberTable()->saveMember($member);
+            $member->exchangeArray($postData);
+            $this->getMemberTable()->saveMember($member);
             return array(
                 'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification
@@ -72,75 +75,6 @@ class MemberController extends AbstractActionController
         return ['postData' => $postData];
     }
 
-    // public function editAction()
-    // {
-    //     $id = (int) $this->params()->fromRoute('id', 0);
-    //     if (!$id) {
-    //         return $this->redirect()->toRoute('member', array(
-    //             'action' => 'add'
-    //         ));
-    //     }
-    //
-    //     // Get the Member with the specified id.  An exception is thrown
-    //     // if it cannot be found, in which case go to the index page.
-    //     try {
-    //         $member = $this->getMemberTable()->getMember($id);
-    //     }
-    //     catch (\Exception $ex) {
-    //         return $this->redirect()->toRoute('member', array(
-    //             'action' => 'index'
-    //         ));
-    //     }
-    //
-    //     $form  = new MemberForm();
-    //     $form->bind($member);
-    //     $form->get('submit')->setAttribute('value', 'Edit');
-    //
-    //     $request = $this->getRequest();
-    //     if ($request->isPost()) {
-    //         $form->setInputFilter($member->getInputFilter());
-    //         $form->setData($request->getPost());
-    //
-    //         if ($form->isValid()) {
-    //             $this->getMemberTable()->saveMember($member);
-    //
-    //             // Redirect to list of members
-    //             return $this->redirect()->toRoute('member');
-    //         }
-    //     }
-    //
-    //     return array(
-    //         'id' => $id,
-    //         'form' => $form,
-    //     );
-    // }
-    //
-    // public function deleteAction()
-    // {
-    //     $id = (int) $this->params()->fromRoute('id', 0);
-    //     if (!$id) {
-    //         return $this->redirect()->toRoute('member');
-    //     }
-    //
-    //     $request = $this->getRequest();
-    //     if ($request->isPost()) {
-    //         $del = $request->getPost('del', 'No');
-    //
-    //         if ($del == 'Yes') {
-    //             $id = (int) $request->getPost('id');
-    //             $this->getMemberTable()->deleteMember($id);
-    //         }
-    //
-    //         // Redirect to list of members
-    //         return $this->redirect()->toRoute('member');
-    //     }
-    //
-    //     return array(
-    //         'id'    => $id,
-    //         'member' => $this->getMemberTable()->getMember($id)
-    //     );
-    // }
-    //
     public function getMemberTable()
     {
         if (!$this->memberTable) {
@@ -179,7 +113,11 @@ class MemberController extends AbstractActionController
 
     private function getAddService()
     {
-        return $this->getServiceLocator()->get('AddService');
+        if (!$this->addService) {
+            $sm = $this->getServiceLocator();
+            $this->addService = $sm->get('Member\Model\Add\AddService');
+        }
+        return $this->addService;
     }
 }
 

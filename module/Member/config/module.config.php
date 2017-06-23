@@ -31,9 +31,9 @@ return array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ),
-        'invokables' => [
-            'AddService' => \Member\Model\Add\AddService::class,
-        ],
+        // 'invokables' => [
+        //     'AddService' => \Member\Model\Add\AddService::class,
+        // ],
     ),
 
     'view_manager' => array(

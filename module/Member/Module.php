@@ -5,6 +5,7 @@ use Member\Model\Member;
 use Member\Model\MemberTable;
 use Member\Model\BusinessClassification;
 use Member\Model\BusinessClassificationTable;
+use Member\Model\Add\AddService;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
@@ -37,6 +38,11 @@ class Module
                     $tableGateway = $sm->get('MemberTableGateway');
                     $table = new MemberTable($tableGateway);
                     return $table;
+                },
+                'Member\Model\Add\AddService' => function($sm) {
+                    $memberTable = $sm->get('Member\Model\MemberTable');
+                    $service = new AddService($memberTable);
+                    return $service;
                 },
                 'MemberTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');

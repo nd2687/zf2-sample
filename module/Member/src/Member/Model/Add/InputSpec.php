@@ -5,12 +5,44 @@ namespace Member\Model\Add;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\InputFilter\Input;
 use Zend\Filter\StringTrim;
-// use Zend\I18n\Validator\Alnum;
+use Zend\I18n\Validator\Alnum;
 use Zend\Validator\StringLength;
 use Zend\Validator\Identical;
 
 class InputSpec implements InputFilterProviderInterface
 {
+    private $service;
+
+    public function __construct(AddService $service)
+    {
+        $this->service = $service;
+    }
+
+
+    public function loginId()
+    {
+        $input = new Input('login_id');
+
+        // $input->getFilterChain()
+        //     ->attach(new StringTrim());
+
+        $input->getValidatorChain()
+            ->attach(new StringLength(['min'=> 4, 'max' => 16]))
+            ->attach(new Alnum())
+            ->attach(
+                Validators::callback(function ($value) {
+                    return !$this->service->loginIdExists($value);
+                })->setMessage('このログイン名は、既に使用されています。')
+            );
+
+        return $input;
+    }
+
+    // public function getService()
+    // {
+    //     return $this->service;
+    // }
+
     public function getInputFilterSpecification()
     {
         return [
@@ -23,26 +55,6 @@ class InputSpec implements InputFilterProviderInterface
             $this->birthday(),
             $this->businessClassificationId()
         ];
-    }
-
-    public function loginId()
-    {
-        $input = new Input('login_id');
-
-        // $input->getFilterChain()
-        //     ->attach(new StringTrim());
-
-        $input->getValidatorChain()
-            ->attach(new StringLength(['min'=> 4, 'max' => 16]));
-        //     ->attach(new Alnum());
-
-/*            ->attach(
-                Validators::callback(function ($id) {
-                    return !$this->service->loginIdExists($id);
-                })->setMessage('既に使用されています。')
-            );
- */
-        return $input;
     }
 
     public function password()
@@ -81,7 +93,12 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('mail_address');
         $input->getValidatorChain()
-            ->attach(new StringLength(['max'=> 16]));
+            ->attach(new StringLength(['max'=> 16]))
+            ->attach(
+                Validators::callback(function ($value) {
+                    return !$this->service->mailAddressExists($value);
+                })->setMessage('このメールアドレスは、既に使用されています。')
+            );
         return $input;
     }
 
