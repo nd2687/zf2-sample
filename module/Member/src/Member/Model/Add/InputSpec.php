@@ -5,8 +5,9 @@ namespace Member\Model\Add;
 use Zend\InputFilter\InputFilterProviderInterface;
 use Zend\InputFilter\Input;
 use Zend\Filter\StringTrim;
-use Zend\I18n\Validator\Alnum;
+// use Zend\I18n\Validator\Alnum;
 use Zend\Validator\StringLength;
+use Zend\Validator\Identical;
 
 class InputSpec implements InputFilterProviderInterface
 {
@@ -48,7 +49,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('password');
         $input->getValidatorChain()
-            ->attach(new StringLength(['min'=> 2, 'max' => 4]));
+            ->attach(new StringLength(['min'=> 2, 'max' => 8]));
         return $input;
     }
 
@@ -56,7 +57,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('password_confirmation');
         $input->getValidatorChain()
-            ->attach(new StringLength(['min'=> 2, 'max' => 4]));
+            ->attach(new Identical(['token' => 'password']));
         return $input;
     }
 
@@ -64,7 +65,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('name');
         $input->getValidatorChain()
-            ->attach(new StringLength(['max'=> 4]));
+            ->attach(new StringLength(['max'=> 8]));
         return $input;
     }
 
@@ -72,7 +73,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('name_kana');
         $input->getValidatorChain()
-            ->attach(new StringLength(['max'=> 4]));
+            ->attach(new StringLength(['max'=> 8]));
         return $input;
     }
 
@@ -80,7 +81,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('mail_address');
         $input->getValidatorChain()
-            ->attach(new StringLength(['max'=> 4]));
+            ->attach(new StringLength(['max'=> 16]));
         return $input;
     }
 

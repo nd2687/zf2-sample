@@ -1,0 +1,13 @@
+{% extends 'layout/layout.twig' %}
+
+{% block content %}
+<h1>仮登録画面</h1>
+<p>メールを送信しました。</p>
+
+{% for key, value in postData %}
+    <b>{{ key }}</b>
+    {{ value }}
+    <br>
+{% endfor %}
+
+{% endblock content %}
