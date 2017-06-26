@@ -49,10 +49,8 @@ class MemberController extends AbstractActionController
         if(!empty($postData) && !empty($postData["business_classification_id"])) {
             $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
         }
-        $member = new Member();
         if ($inputs->isValid()) {
-            $member->exchangeArray($postData);
-            $this->getMemberTable()->saveMember($member);
+            $member = new Member();
             return array(
                 'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification
@@ -72,7 +70,32 @@ class MemberController extends AbstractActionController
 
     public function completeAction() {
         $postData = $this->params()->fromPost();
-        return ['postData' => $postData];
+
+        $inputs = $this->createInputFilter();
+        $inputs->setData($postData);
+
+        if ($inputs->isValid()) {
+            $member = new Member();
+            $member->exchangeArray($postData);
+            $this->getMemberTable()->saveMember($member);
+            return array(
+                'inputs' => $inputs->getInputs(),
+            );
+        } else {
+            $business_classification = '';
+            if(!empty($postData) && !empty($postData["business_classification_id"])) {
+                $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
+            }
+            $bc_ary = $this->getArrayBusinessClassification();
+            $view = new ViewModel([
+                'inputs' => $inputs->getInputs(),
+                'business_classification' => $business_classification,
+                'bc_ary' => $bc_ary,
+            ]);
+            $view->setTemplate('member/member/add.twig');
+            return $view;
+        }
+        return ['Message' => 'Method Not Allowed.'];
     }
 
     public function getMemberTable()

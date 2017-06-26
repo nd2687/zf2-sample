@@ -93,7 +93,7 @@ class InputSpec implements InputFilterProviderInterface
     {
         $input = new Input('mail_address');
         $input->getValidatorChain()
-            ->attach(new StringLength(['max'=> 16]))
+            ->attach(new StringLength(['max'=> 32]))
             ->attach(
                 Validators::callback(function ($value) {
                     return !$this->service->mailAddressExists($value);
