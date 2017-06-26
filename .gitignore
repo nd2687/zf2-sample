@@ -11,3 +11,4 @@ vendor/
 !vendor/README.md
 !vendor/ZF2/
 logs/debug.log
+data/mail/*

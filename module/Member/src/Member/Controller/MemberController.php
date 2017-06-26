@@ -5,11 +5,16 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\InputFilter\Factory;
 use Member\Model\Member;
+use Member\Model\Premember;
 use Member\Model\Add;
 use Member\Model\BusinessClassification;
 use Member\Form\MemberForm;
 use Member\Model\Add\AddService;
 use Member\Model\Member\MemberTable;
+use Member\Model\Member\PrememberTable;
+use Zend\Mail\Message;
+use Zend\Mail\Transport\File as FileTransport;
+use Zend\Mail\Transport\FileOptions;
 
 class MemberController extends AbstractActionController
 {
@@ -50,7 +55,6 @@ class MemberController extends AbstractActionController
             $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
         }
         if ($inputs->isValid()) {
-            $member = new Member();
             return array(
                 'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification
@@ -65,21 +69,24 @@ class MemberController extends AbstractActionController
             $view->setTemplate('member/member/add.twig');
             return $view;
         }
-        return ['Message' => 'Method Not Allowed.'];
     }
 
     public function completeAction() {
         $postData = $this->params()->fromPost();
-
         $inputs = $this->createInputFilter();
         $inputs->setData($postData);
 
         if ($inputs->isValid()) {
-            $member = new Member();
-            $member->exchangeArray($postData);
-            $this->getMemberTable()->saveMember($member);
+            $premember = new Premember();
+            $postData['link_pass'] = hash('sha256', uniqid(rand(), 1));
+            $date = date('Y-m-d H:i:sP', strtotime('+2 hour'));
+            $postData['expired_at'] = $date;
+            $premember->exchangeArray($postData);
+            $this->getPrememberTable()->savePremember($premember);
+            $this->mail_to_premember($postData);
             return array(
                 'inputs' => $inputs->getInputs(),
+                'regist_url' => $postData['link_pass'],
             );
         } else {
             $business_classification = '';
@@ -95,7 +102,6 @@ class MemberController extends AbstractActionController
             $view->setTemplate('member/member/add.twig');
             return $view;
         }
-        return ['Message' => 'Method Not Allowed.'];
     }
 
     public function getMemberTable()
@@ -107,6 +113,15 @@ class MemberController extends AbstractActionController
         return $this->memberTable;
     }
 
+    public function getPrememberTable()
+    {
+        if (!$this->prememberTable) {
+            $sm = $this->getServiceLocator();
+            $this->prememberTable = $sm->get('Member\Model\PrememberTable');
+        }
+        return $this->prememberTable;
+    }
+
     public function getBusinessClassificationTable()
     {
         if (!$this->business_classificationTable) {
@@ -114,6 +129,64 @@ class MemberController extends AbstractActionController
             $this->business_classificationTable = $sm->get('Member\Model\BusinessClassificationTable');
         }
         return $this->business_classificationTable;
+    }
+
+    public function checkPrememberAction()
+    {
+        $loginId = $this->params()->fromQuery('login_id');
+        $linkPass = $this->params()->fromQuery('link_pass');
+        if(!empty($loginId) && !empty($linkPass)) {
+            $premember = $this->getPrememberTable()->authPremember($loginId, $linkPass);
+            if(!empty($premember)) {
+                $this->getPrememberTable()->deletePremember($premember->id);
+                $this->getMemberTable()->saveMember($premember);
+                $message = "登録完了しました。ログインしてください。";
+            } else {
+                $message = "このURLは無効です";
+            }
+        } else {
+            $message = "このURLは無効です。";
+        }
+
+        $view = new ViewModel([
+            'message' => $message,
+        ]);
+        $view->setTemplate('member/member/checkPremember.twig');
+        return $view;
+    }
+
+
+    public function mail_to_premember($userdata)
+    {
+        $message = new Message();
+        $message->setEncoding("UTF-8");
+        $message->addFrom("zf2-sample@example.com")
+                ->addTo($userdata["mail_address"])
+                ->setSubject("会員登録の確認"); // Subject 文字化け
+        $messageBody =<<<EOM
+{$userdata['login_id']}様
+
+会員登録ありがとうございます。
+下のリンクにアクセスして会員登録を完了してください。
+http://zf2kawano.local/member/checkPremember?login_id={$userdata["login_id"]}&link_pass={$userdata['link_pass']}
+
+このメールに覚えがない場合はメールを削除してください。
+
+--
+会員システム
+
+EOM;
+        $message->setBody($messageBody);
+
+        $transport = new FileTransport();
+        $options   = new FileOptions(array(
+            'path' => 'data/mail',
+            'callback' => function (FileTransport $transport) {
+                return 'Message_' . microtime(true) . '_' . mt_rand() . '.txt';
+            },
+        ));
+        $transport->setOptions($options);
+        $transport->send($message);
     }
 
     private function getArrayBusinessClassification()

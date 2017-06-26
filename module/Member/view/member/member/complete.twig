@@ -1,13 +1,8 @@
 {% extends 'layout/layout.twig' %}
 
 {% block content %}
-<h1>仮登録画面</h1>
-<p>メールを送信しました。</p>
-
-{% for key, value in postData %}
-    <b>{{ key }}</b>
-    {{ value }}
-    <br>
-{% endfor %}
+<h1>メール送信完了画面</h1>
+登録されたメールアドレスへ確認のためのメールを送信しました。<br>
+メール本文に記載されているURLにアクセスして登録を完了してください。<br>
 
 {% endblock content %}

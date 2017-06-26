@@ -13,7 +13,7 @@ CREATE TABLE `sample`.`premember` (
   `birthday`                   varchar(24),
   `business_classification_id` int,
   `link_pass`                  varchar(128),
-  `expired_dt`                 datetime     NOT NULL,
+  `expired_at`                 datetime     NOT NULL,
   `created_at`                 datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`                 datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP  ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

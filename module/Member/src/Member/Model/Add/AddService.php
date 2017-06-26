@@ -5,15 +5,16 @@ namespace Member\Model\Add;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Member\Model\MemberTable;
+use Member\Model\PrememberTable;
 
 class AddService
 {
     private $memberTable;
     private $mt;
 
-    public function __construct(MemberTable $mt)
+    public function __construct(PrememberTable $pmt)
     {
-        $this->memberTable = $mt;
+        $this->prememberTable = $pmt;
     }
 
     public function getInputSpec()
@@ -23,11 +24,11 @@ class AddService
 
     public function loginIdExists($value)
     {
-        return $this->memberTable->loginIdExists($value);
+        return $this->prememberTable->loginIdExists($value);
     }
 
     public function mailAddressExists($value)
     {
-        return $this->memberTable->mailAddressExists($value);
+        return $this->prememberTable->mailAddressExists($value);
     }
 }

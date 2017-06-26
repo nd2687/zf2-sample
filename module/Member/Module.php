@@ -3,6 +3,8 @@ namespace Member;
 
 use Member\Model\Member;
 use Member\Model\MemberTable;
+use Member\Model\Premember;
+use Member\Model\PrememberTable;
 use Member\Model\BusinessClassification;
 use Member\Model\BusinessClassificationTable;
 use Member\Model\Add\AddService;
@@ -39,11 +41,6 @@ class Module
                     $table = new MemberTable($tableGateway);
                     return $table;
                 },
-                'Member\Model\Add\AddService' => function($sm) {
-                    $memberTable = $sm->get('Member\Model\MemberTable');
-                    $service = new AddService($memberTable);
-                    return $service;
-                },
                 'MemberTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
@@ -60,6 +57,22 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new BusinessClassification());
                     return new TableGateway('business_classification', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Member\Model\Add\AddService' => function($sm) {
+                    $memberTable = $sm->get('Member\Model\PrememberTable');
+                    $service = new AddService($memberTable);
+                    return $service;
+                },
+                'Member\Model\PrememberTable' =>  function($sm) {
+                    $tableGateway = $sm->get('PrememberTableGateway');
+                    $table = new PrememberTable($tableGateway);
+                    return $table;
+                },
+                'PrememberTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Premember());
+                    return new TableGateway('premember', $dbAdapter, null, $resultSetPrototype);
                 },
             ),
         );

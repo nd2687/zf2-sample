@@ -40,18 +40,7 @@ class MemberTable
         return $resultSet;
     }
 
-    // public function getMember($id)
-    // {
-    //     $id  = (int) $id;
-    //     $rowset = $this->tableGateway->select(array('id' => $id));
-    //     $row = $rowset->current();
-    //     if (!$row) {
-    //         throw new \Exception("Could not find row $id");
-    //     }
-    //     return $row;
-    // }
-
-    public function saveMember(Member $member)
+    public function saveMember($member)
     {
         $data = array(
             'login_id' => $member->login_id,
@@ -63,15 +52,11 @@ class MemberTable
             'business_classification_id' => $member->business_classification_id,
         );
 
-        $id = (int)$member->id;
-        if ($id == 0) {
+        $loginId = $member->login_id;
+        if (!$this->loginIdExists($loginId)) {
             $this->tableGateway->insert($data);
         } else {
-            if ($this->getMember($id)) {
-                $this->tableGateway->update($data, array('id' => $id));
-            } else {
-                throw new \Exception('Form id does not exist');
-            }
+            throw new \Exception('Fatal error. login_id is already exists.');
         }
     }
 
