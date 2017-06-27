@@ -13,8 +13,8 @@ use Member\Model\Add\AddService;
 use Member\Model\Member\MemberTable;
 use Member\Model\Member\PrememberTable;
 use Zend\Mail\Message;
-use Zend\Mail\Transport\File as FileTransport;
-use Zend\Mail\Transport\FileOptions;
+use Zend\Mail\Transport\Smtp as SmtpTransport;
+use Zend\Mail\Transport\SmtpOptions;
 
 class MemberController extends AbstractActionController
 {
@@ -178,12 +178,10 @@ http://zf2kawano.local/member/checkPremember?login_id={$userdata["login_id"]}&li
 EOM;
         $message->setBody($messageBody);
 
-        $transport = new FileTransport();
-        $options   = new FileOptions(array(
-            'path' => 'data/mail',
-            'callback' => function (FileTransport $transport) {
-                return 'Message_' . microtime(true) . '_' . mt_rand() . '.txt';
-            },
+        $transport = new SmtpTransport();
+        $options   = new SmtpOptions(array(
+            'host'              => 'zf2kawano_mailcatcher_1',
+            'port'              => '1025',
         ));
         $transport->setOptions($options);
         $transport->send($message);
