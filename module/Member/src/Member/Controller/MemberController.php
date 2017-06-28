@@ -15,6 +15,7 @@ use Member\Model\Member\PrememberTable;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
+use Member\Model\Auth as Auth;
 
 class MemberController extends AbstractActionController
 {
@@ -24,6 +25,8 @@ class MemberController extends AbstractActionController
 
     public function indexAction()
     {
+        $auth = new Auth($this->getServiceLocator());
+        var_dump($auth->getLoginUser());
         return new ViewModel(array(
             'members' => $this->getMemberTable()->fetchAll(),
         ));

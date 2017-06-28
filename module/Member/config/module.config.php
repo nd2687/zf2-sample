@@ -3,6 +3,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Member\Controller\Member' => 'Member\Controller\MemberController',
+            'Member\Controller\Auth' => 'Member\Controller\AuthController',
         ),
     ),
 
@@ -12,13 +13,14 @@ return array(
             'member' => array(
                 'type'    => 'segment',
                 'options' => array(
-                    'route'    => '/member[/][:action][/:id]',
+                    'route'    => '/[:controller][/:action][/:id]',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'     => '[0-9]+',
                     ),
                     'defaults' => array(
-                        'controller' => 'Member\Controller\Member',
+                        '__NAMESPACE__' => 'Member\Controller',
+                        'controller' => 'Member',
                         'action'     => 'index',
                     ),
                 ),
