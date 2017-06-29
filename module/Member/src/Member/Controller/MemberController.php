@@ -92,8 +92,13 @@ class MemberController extends AbstractActionController
             $date = date('Y-m-d H:i:sP', strtotime('+2 hour'));
             $postData['expired_at'] = $date;
             $premember->exchangeArray($postData);
-            $this->getPrememberTable()->savePremember($premember);
-            $this->mail_to_premember($postData);
+            try {
+                $this->getPrememberTable()->savePremember($premember);
+                $this->mail_to_premember($postData);
+            } catch (Exception $e){
+                echo $e->getMessage()."\n";
+
+            }
             $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
                 'regist_url' => $postData['link_pass'],
@@ -121,8 +126,12 @@ class MemberController extends AbstractActionController
         if(!empty($loginId) && !empty($linkPass)) {
             $premember = $this->getPrememberTable()->authPremember($loginId, $linkPass);
             if(!empty($premember)) {
-                $this->getPrememberTable()->deletePremember($premember->id);
-                $this->getMemberTable()->saveMember($premember);
+                try {
+                    $this->getPrememberTable()->deletePremember($premember->id);
+                    $this->getMemberTable()->saveMember($premember);
+                } catch (Exception $e) {
+                    echo $e->getMessage()."\n";
+                }
                 $message = "登録完了しました。ログインしてください。";
             } else {
                 $message = "このURLは無効です";
