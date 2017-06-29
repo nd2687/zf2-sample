@@ -22,20 +22,22 @@ class MemberController extends AbstractActionController
     protected $memberTable;
     protected $business_classificationTable;
     protected $addService;
-    protected $_viewModel;
+    protected $view;
 
-    protected function _initView($checkLogin){
-        $this->_viewModel = new ViewModel();
-        $this->_viewModel->logined = $checkLogin;
+    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    {
+        $this->view = new ViewModel();
+        $auth = new Auth($this->getServiceLocator());
+        $this->view->logined = $auth->checkLogin();
+        return parent::onDispatch($e);
     }
 
     public function indexAction()
     {
         $auth = new Auth($this->getServiceLocator());
-        $this->_initView($auth->checkLogin());
         $check_test_array = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
         var_dump($check_test_array);
-        return $this->_viewModel;
+        return $this->view;
     }
 
     public function addAction()
@@ -46,11 +48,12 @@ class MemberController extends AbstractActionController
             $inputs->setData($postData);
         }
         $bc_ary = $this->getArrayBusinessClassification();
-        return array(
+        $this->view->setVariables([
             'inputs' => $inputs->getInputs(),
             'bc_ary' => $bc_ary,
             'postData' => $postData,
-        );
+        ]);
+        return $this->view;
     }
 
     public function confirmAction()
@@ -64,20 +67,20 @@ class MemberController extends AbstractActionController
             $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
         }
         if ($inputs->isValid()) {
-            return array(
+            $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
-                'business_classification' => $business_classification
-            );
+                'business_classification' => $business_classification,
+            ]);
         } else {
             $bc_ary = $this->getArrayBusinessClassification();
-            $view = new ViewModel([
+            $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification,
                 'bc_ary' => $bc_ary,
             ]);
-            $view->setTemplate('member/member/add.twig');
-            return $view;
+            $this->view->setTemplate('member/member/add.twig');
         }
+        return $this->view;
     }
 
     public function completeAction() {
@@ -93,51 +96,24 @@ class MemberController extends AbstractActionController
             $premember->exchangeArray($postData);
             $this->getPrememberTable()->savePremember($premember);
             $this->mail_to_premember($postData);
-            return array(
+            $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
                 'regist_url' => $postData['link_pass'],
-            );
+            ]);
         } else {
             $business_classification = '';
             if(!empty($postData) && !empty($postData["business_classification_id"])) {
                 $business_classification = $this->getBusinessClassificationTable()->getBusinessClassification($postData["business_classification_id"]);
             }
             $bc_ary = $this->getArrayBusinessClassification();
-            $view = new ViewModel([
+            $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
                 'business_classification' => $business_classification,
                 'bc_ary' => $bc_ary,
             ]);
-            $view->setTemplate('member/member/add.twig');
-            return $view;
+            $this->view->setTemplate('member/member/add.twig');
         }
-    }
-
-    public function getMemberTable()
-    {
-        if (!$this->memberTable) {
-            $sm = $this->getServiceLocator();
-            $this->memberTable = $sm->get('Member\Model\MemberTable');
-        }
-        return $this->memberTable;
-    }
-
-    public function getPrememberTable()
-    {
-        if (!$this->prememberTable) {
-            $sm = $this->getServiceLocator();
-            $this->prememberTable = $sm->get('Member\Model\PrememberTable');
-        }
-        return $this->prememberTable;
-    }
-
-    public function getBusinessClassificationTable()
-    {
-        if (!$this->business_classificationTable) {
-            $sm = $this->getServiceLocator();
-            $this->business_classificationTable = $sm->get('Member\Model\BusinessClassificationTable');
-        }
-        return $this->business_classificationTable;
+        return $this->view;
     }
 
     public function checkPrememberAction()
@@ -157,26 +133,53 @@ class MemberController extends AbstractActionController
             $message = "このURLは無効です。";
         }
 
-        $view = new ViewModel([
+        $this->view->setVariables([
             'message' => $message,
         ]);
-        $view->setTemplate('member/member/checkPremember.twig');
-        return $view;
+        $this->view->setTemplate('member/member/checkPremember.twig');
+        return $this->view;
     }
 
     public function searchAction()
     {
         $auth = new Auth($this->getServiceLocator());
-        $this->_initView($auth->checkLogin());
         $members = $this->getMemberTable()->fetchAll();
         var_dump($members->count());
-        $this->_viewModel->setVariables([
+
+        $this->view->setVariables([
             'members' => $members,
         ]);
-        return $this->_viewModel;
+        return $this->view;
     }
 
-    public function mail_to_premember($userdata)
+    private function getMemberTable()
+    {
+        if (!$this->memberTable) {
+            $sm = $this->getServiceLocator();
+            $this->memberTable = $sm->get('Member\Model\MemberTable');
+        }
+        return $this->memberTable;
+    }
+
+    private function getPrememberTable()
+    {
+        if (!$this->prememberTable) {
+            $sm = $this->getServiceLocator();
+            $this->prememberTable = $sm->get('Member\Model\PrememberTable');
+        }
+        return $this->prememberTable;
+    }
+
+    private function getBusinessClassificationTable()
+    {
+        if (!$this->business_classificationTable) {
+            $sm = $this->getServiceLocator();
+            $this->business_classificationTable = $sm->get('Member\Model\BusinessClassificationTable');
+        }
+        return $this->business_classificationTable;
+    }
+
+    private function mail_to_premember($userdata)
     {
         $message = new Message();
         $message->setEncoding("UTF-8");
