@@ -24,7 +24,16 @@ class AuthController extends AbstractActionController
         if ($auth->login($login_id, $password)) {
             return( $this->redirect()->toUrl('/member') );
         } else {
-            return( $this->redirect()->toUrl('/auth/loginform') );
+            $view = new ViewModel();
+            $view->setTemplate('member/auth/loginform.twig');
+            $view->setVariables([
+                'inputs' => [
+                    'login_id' => $login_id,
+                    'password' => $password,
+                ],
+                'message' => 'ログイン名かパスワードが違います',
+            ]);
+            return $view;
         }
     }
 
