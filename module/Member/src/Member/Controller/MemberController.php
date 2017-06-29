@@ -29,6 +29,8 @@ class MemberController extends AbstractActionController
         $this->view = new ViewModel();
         $auth = new Auth($this->getServiceLocator());
         $this->view->logined = $auth->checkLogin();
+        $logined_member = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
+        $this->view->logined_member = $logined_member;
         return parent::onDispatch($e);
     }
 
@@ -36,7 +38,6 @@ class MemberController extends AbstractActionController
     {
         $auth = new Auth($this->getServiceLocator());
         $check_test_array = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
-        var_dump($check_test_array);
         return $this->view;
     }
 
@@ -144,8 +145,6 @@ class MemberController extends AbstractActionController
     {
         $auth = new Auth($this->getServiceLocator());
         $members = $this->getMemberTable()->fetchAll();
-        var_dump($members->count());
-
         $this->view->setVariables([
             'members' => $members,
         ]);

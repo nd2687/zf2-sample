@@ -38,11 +38,6 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
-    // public function getService()
-    // {
-    //     return $this->service;
-    // }
-
     public function getInputFilterSpecification()
     {
         return [

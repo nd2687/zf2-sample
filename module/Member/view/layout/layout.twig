@@ -37,6 +37,7 @@
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="{{ url('member', {controller:'member',action:'index'}) }}">{{ translate('Home') }}</a></li>
+                        <li class="active"><a href='#'>{{ logined_member['login_id'] }}</a></li>
                         {% if logined %}
                         <li class="active"><a href="{{ url('member', {controller:'member',action:'search'}) }}">会員検索</a></li>
                         <li class="active"><a href="{{ url('member', {controller:'auth',action:'logout'}) }}">ログアウト</a></li>
