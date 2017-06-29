@@ -15,6 +15,7 @@ use Zend\Mail\Message;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 use Member\Model\Auth as Auth;
+use Zend\Mvc\MvcEvent;
 
 class MemberController extends AbstractActionController
 {
@@ -23,7 +24,7 @@ class MemberController extends AbstractActionController
     protected $addService;
     protected $view;
 
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    public function onDispatch(MvcEvent $e)
     {
         $this->view = new ViewModel();
         $auth = new Auth($this->getServiceLocator());
