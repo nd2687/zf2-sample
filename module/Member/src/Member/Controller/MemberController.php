@@ -22,14 +22,20 @@ class MemberController extends AbstractActionController
     protected $memberTable;
     protected $business_classificationTable;
     protected $addService;
+    protected $_viewModel;
+
+    protected function _initView($checkLogin){
+        $this->_viewModel = new ViewModel();
+        $this->_viewModel->logined = $checkLogin;
+    }
 
     public function indexAction()
     {
         $auth = new Auth($this->getServiceLocator());
-        var_dump($auth->getLoginUser());
-        return new ViewModel(array(
-            'members' => $this->getMemberTable()->fetchAll(),
-        ));
+        $this->_initView($auth->checkLogin());
+        $check_test_array = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
+        var_dump($check_test_array);
+        return $this->_viewModel;
     }
 
     public function addAction()
@@ -158,6 +164,17 @@ class MemberController extends AbstractActionController
         return $view;
     }
 
+    public function searchAction()
+    {
+        $auth = new Auth($this->getServiceLocator());
+        $this->_initView($auth->checkLogin());
+        $members = $this->getMemberTable()->fetchAll();
+        var_dump($members->count());
+        $this->_viewModel->setVariables([
+            'members' => $members,
+        ]);
+        return $this->_viewModel;
+    }
 
     public function mail_to_premember($userdata)
     {

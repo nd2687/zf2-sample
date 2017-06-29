@@ -8,6 +8,7 @@ use Member\Model\PrememberTable;
 use Member\Model\BusinessClassification;
 use Member\Model\BusinessClassificationTable;
 use Member\Model\Add\AddService;
+use Member\Model\Auth as Auth;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
