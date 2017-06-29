@@ -17,8 +17,11 @@ class Auth
         $this->auth = new AuthenticationService(new SessionStorage('member_session'));
     }
 
-    public function login( $key, $pass )
+    public function login($key, $pass)
     {
+        if (empty($key) && empty($pass)) {
+            return false;
+        }
         $dbAdapter = $this->service_locator->get('Zend\Db\Adapter\Adapter');
         $authAdapter = new AuthAdapter($dbAdapter);
         $authAdapter
