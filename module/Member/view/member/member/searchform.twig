@@ -1,0 +1,46 @@
+{% extends 'layout/layout.twig' %}
+
+{% block content %}
+<h1>会員検索</h1>
+    <div class="row">
+        <form action="/member/search" method='post'>
+            <table border="0">
+                <tr>
+                    <td align="right"><b>名前/ふりがな</b></td>
+                    <td><input type="text" name="name" placeholder="名前/ふりがな" value={{ inputs['name'] }}></input></td>
+                </tr>
+
+                <tr>
+                    <td align="right"><b>誕生日</b></td>
+                    <td><input type="date" name="from" value={{ inputs['from'] }}></input></td>
+                    <td> 〜 </td>
+                    <td><input type="date" name="to" value={{ inputs['to'] }}></input></td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="検索"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <br>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>名前</th>
+            <th>ふりがな</th>
+            <th>メールアドレス</th>
+            <th>誕生日</th>
+        </tr>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.id }}</td>
+            <td>{{ member.name }}</td>
+            <td>{{ member.name_kana }}</td>
+            <td>{{ member.mail_address }}</td>
+            <td>{{ member.birthday }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}

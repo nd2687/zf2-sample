@@ -40,6 +40,23 @@ class MemberTable
         return $resultSet;
     }
 
+    public function searchMember($name, $from, $to)
+    {
+        $select = $this->tableGateway->getSql()->select();
+        if (!empty($name)) {
+            $select->where
+                ->like('name', '%' . $name . '%')
+                ->or
+                ->like('name_kana', '%' . $name . '%');
+        }
+        if (!empty($from) || !empty($to)) {
+            $select->where->between('birthday', $from, $to);
+        }
+        $rowset = $this->tableGateway->selectWith($select);
+        $resultSet = $rowset;
+        return $resultSet;
+    }
+
     public function saveMember($member)
     {
         $data = array(

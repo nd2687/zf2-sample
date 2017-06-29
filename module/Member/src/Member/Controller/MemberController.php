@@ -35,8 +35,6 @@ class MemberController extends AbstractActionController
 
     public function indexAction()
     {
-        $auth = new Auth($this->getServiceLocator());
-        $check_test_array = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
         return $this->view;
     }
 
@@ -140,13 +138,30 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
-    public function searchAction()
+    public function searchformAction()
     {
-        $auth = new Auth($this->getServiceLocator());
         $members = $this->getMemberTable()->fetchAll();
         $this->view->setVariables([
             'members' => $members,
         ]);
+        return $this->view;
+    }
+
+    public function searchAction()
+    {
+        $name = $this->params()->fromPost('name');
+        $from = $this->params()->fromPost('from');
+        $to = $this->params()->fromPost('to');
+        $resultSet = $this->getMemberTable()->searchMember($name, $from, $to);
+        $this->view->setVariables([
+            'members' => $resultSet,
+            'inputs' => [
+                'name' => $name,
+                'from' => $from,
+                'to' => $to,
+            ],
+        ]);
+        $this->view->setTemplate('member/member/searchform.twig');
         return $this->view;
     }
 
