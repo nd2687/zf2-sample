@@ -16,6 +16,7 @@ use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 use Member\Model\Auth as Auth;
 use Zend\Mvc\MvcEvent;
+use Zend\Db\Adapter\Adapter;
 
 class MemberController extends AbstractActionController
 {
@@ -93,12 +94,15 @@ class MemberController extends AbstractActionController
             $date = date('Y-m-d H:i:sP', strtotime('+2 hour'));
             $postData['expired_at'] = $date;
             $premember->exchangeArray($postData);
+            $conn = $this->getConnection();
             try {
+                $conn->beginTransaction();
                 $this->getPrememberTable()->savePremember($premember);
                 $this->mail_to_premember($postData);
+                $conn->commit();
             } catch (Exception $e){
+                $conn->rollback();
                 echo $e->getMessage()."\n";
-
             }
             $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
@@ -127,10 +131,14 @@ class MemberController extends AbstractActionController
         if(!empty($loginId) && !empty($linkPass)) {
             $premember = $this->getPrememberTable()->authPremember($loginId, $linkPass);
             if(!empty($premember)) {
+                $conn = $this->getConnection();
                 try {
+                    $conn->beginTransaction();
                     $this->getPrememberTable()->deletePremember($premember->id);
                     $this->getMemberTable()->saveMember($premember);
+                    $conn->commit();
                 } catch (Exception $e) {
+                    $conn->rollback();
                     echo $e->getMessage()."\n";
                 }
                 $message = "登録完了しました。ログインしてください。";
@@ -258,6 +266,14 @@ EOM;
             $this->addService = $sm->get('Member\Model\Add\AddService');
         }
         return $this->addService;
+    }
+
+    private function getConnection()
+    {
+        $sm = $this->getServiceLocator();
+        $adapter = $sm->get('Zend\Db\Adapter\Adapter');
+        $conn = $adapter->getDriver()->getConnection();
+        return $conn;
     }
 }
 
