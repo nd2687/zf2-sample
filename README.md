@@ -84,3 +84,9 @@ project and you should be ready to go! It should look something like below:
 ```
 error_log(print_r('****'."\n",true),3,'./logs/debug.log');
 ```
+
+UnitTest実行
+
+```
+container_app_path$ ./vendor/bin/phpunit ./module/Member/test/
+```
