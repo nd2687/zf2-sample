@@ -9,12 +9,16 @@ use Member\Model\Add\AddService;
 
 class AuthController extends AbstractActionController
 {
+    /** @var AddService $addService */
     protected $addService;
 
     public function loginformAction()
     {
     }
 
+    /**
+     * @return Response|ViewModel
+     */
     public function loginAction()
     {
         $login_id = $this->params()->fromPost('login_id');
@@ -37,19 +41,13 @@ class AuthController extends AbstractActionController
         }
     }
 
+    /**
+     * @return Response
+     */
     public function logoutAction()
     {
         $auth = new Auth($this->getServiceLocator());
         $auth->logout();
         return($this->redirect()->toUrl('/auth/loginform'));
     }
-
-    public function mustLogin()
-    {
-        $auth = new Auth($this->getServiceLocator());
-        if(!$auth->checkLogin()){
-            return($this->redirect()->toUrl('/auth/loginform'));
-        }
-    }
-
 }

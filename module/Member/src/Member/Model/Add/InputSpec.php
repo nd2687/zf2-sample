@@ -1,5 +1,4 @@
 <?php
-
 namespace Member\Model\Add;
 
 use Zend\InputFilter\InputFilterProviderInterface;
@@ -11,21 +10,23 @@ use Zend\Validator\Identical;
 
 class InputSpec implements InputFilterProviderInterface
 {
+    /** @var AddService $service */
     private $service;
 
+    /**
+     * @param AddService $service
+     */
     public function __construct(AddService $service)
     {
         $this->service = $service;
     }
 
-
+    /**
+     * @return Input
+     */
     public function loginId()
     {
         $input = new Input('login_id');
-
-        // $input->getFilterChain()
-        //     ->attach(new StringTrim());
-
         $input->getValidatorChain()
             ->attach(new StringLength(['min'=> 4, 'max' => 16]))
             ->attach(new Alnum())
@@ -38,6 +39,9 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Array
+     */
     public function getInputFilterSpecification()
     {
         return [
@@ -52,6 +56,9 @@ class InputSpec implements InputFilterProviderInterface
         ];
     }
 
+    /**
+     * @return Input
+     */
     public function password()
     {
         $input = new Input('password');
@@ -60,6 +67,9 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function passwordConfirmation()
     {
         $input = new Input('password_confirmation');
@@ -68,6 +78,9 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function name()
     {
         $input = new Input('name');
@@ -76,6 +89,9 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function nameKana()
     {
         $input = new Input('name_kana');
@@ -84,6 +100,9 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function mailAddress()
     {
         $input = new Input('mail_address');
@@ -97,12 +116,18 @@ class InputSpec implements InputFilterProviderInterface
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function birthday()
     {
         $input = new Input('birthday');
         return $input;
     }
 
+    /**
+     * @return Input
+     */
     public function businessClassificationId()
     {
         $input = new Input('business_classification_id');

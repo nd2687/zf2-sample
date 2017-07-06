@@ -15,6 +15,9 @@ class Premember
     public $link_pass;
     public $expired_at;
 
+    /**
+     * @param Array $data
+     */
     public function exchangeArray($data)
     {
         $this->id                         = (!empty($data['id'])) ? $data['id'] : null;

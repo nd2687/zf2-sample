@@ -61,8 +61,9 @@ class Module
                     return new TableGateway('business_classification', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Member\Model\Add\AddService' => function($sm) {
-                    $memberTable = $sm->get('Member\Model\PrememberTable');
-                    $service = new AddService($memberTable);
+                    $prememberTable = $sm->get('Member\Model\PrememberTable');
+                    $memberTable = $sm->get('Member\Model\MemberTable');
+                    $service = new AddService($prememberTable, $memberTable);
                     return $service;
                 },
                 'Member\Model\PrememberTable' =>  function($sm) {

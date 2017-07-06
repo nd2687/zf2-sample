@@ -13,6 +13,9 @@ class Member
     public $birthday;
     public $business_classification_id;
 
+    /**
+     * @param Array $data
+     */
     public function exchangeArray($data)
     {
         $this->id                          = (!empty($data['id'])) ? $data['id'] : null;

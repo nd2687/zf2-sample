@@ -7,16 +7,25 @@ use Zend\Authentication\Storage\Session as SessionStorage;
 
 class Auth
 {
+    /** @var ServiceLocator $service_locator */
     protected $service_locator;
+    /** @var MemberTable $memberTable */
     protected $memberTable;
+    /** @var AuthenticationService $auth */
     protected $auth;
 
+    /** @param ServiceLocator $service_locator */
     public function __construct($service_locator)
     {
         $this->service_locator = $service_locator;
         $this->auth = new AuthenticationService(new SessionStorage('member_session'));
     }
 
+    /**
+     * @param String $key ログインID
+     * @param String $pass パスワード
+     * @return bool
+     */
     public function login($key, $pass)
     {
         if (empty($key) && empty($pass)) {
@@ -47,6 +56,9 @@ class Auth
         $this->auth->clearIdentity();
     }
 
+    /**
+     * @return bool
+     */
     public function checkLogin()
     {
         if ($this->auth->hasIdentity()) {
@@ -55,6 +67,9 @@ class Auth
         return false;
     }
 
+    /**
+     * @return stdClass|bool
+     */
     public function getLoginUser()
     {
         if ($this->auth->hasIdentity()) {

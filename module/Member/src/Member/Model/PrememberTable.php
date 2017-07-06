@@ -5,35 +5,56 @@ use Zend\Db\TableGateway\TableGateway;
 
 class PrememberTable
 {
+    /** @var TableGateway $tableGateway */
     protected $tableGateway;
 
+    /** @param TableGateway $tableGateway */
     public function __construct(TableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
     }
 
+    /**
+     * @param String $loginId
+     * @return bool
+     */
     public function loginIdExists($loginId)
     {
         return $this->findByLoginId($loginId) == true;
     }
 
+    /**
+     * @param String $loginId
+     * @return Member
+     */
     public function findByLoginId($loginId)
     {
         $rowset = $this->tableGateway->select(['login_id' => $loginId]);
         return $rowset->current();
     }
 
+    /**
+     * @param String $mailAddress
+     * @return bool
+     */
     public function mailAddressExists($mailAddress)
     {
         return $this->findByMailAddress($mailAddress) == true;
     }
 
+    /**
+     * @param String $mailAddress
+     * @return Member
+     */
     public function findByMailAddress($mailAddress)
     {
         $rowset = $this->tableGateway->select(['mail_address' => $mailAddress]);
         return $rowset->current();
     }
 
+    /**
+     * @return ResultSet
+     */
     public function fetchAll()
     {
         $resultSet = $this->tableGateway->select();

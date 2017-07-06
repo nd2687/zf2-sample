@@ -16,12 +16,21 @@ use Zend\Db\Adapter\Adapter;
 
 class MemberController extends AbstractActionController
 {
+    /** @var MemberTable $memberTable */
     protected $memberTable;
+    /** @var BusinessClassificationTable $business_classificationTable */
     protected $business_classificationTable;
+    /** @var AddService $addService */
     protected $addService;
+    /** @var MailService $mailService */
     protected $mailService;
+    /** @var ViewModel $view */
     protected $view;
 
+    /**
+     * @param MvcEvent
+     * @return ViewModel
+     */
     public function onDispatch(MvcEvent $e)
     {
         $this->view = new ViewModel();
@@ -32,11 +41,17 @@ class MemberController extends AbstractActionController
         return parent::onDispatch($e);
     }
 
+    /**
+     * @return ViewModel
+     */
     public function indexAction()
     {
         return $this->view;
     }
 
+    /**
+     * @return ViewModel
+     */
     public function addAction()
     {
         $inputs = $this->createInputFilter();
@@ -53,6 +68,9 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return ViewModel
+     */
     public function confirmAction()
     {
         $inputs = $this->createInputFilter();
@@ -80,6 +98,9 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return ViewModel
+     */
     public function completeAction() {
         $postData = $this->params()->fromPost();
         $inputs = $this->createInputFilter();
@@ -121,6 +142,9 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return ViewModel
+     */
     public function checkPrememberAction()
     {
         $loginId = $this->params()->fromQuery('login_id');
@@ -153,8 +177,12 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return Response|ViewModel
+     */
     public function searchformAction()
     {
+        $this->mustLogin();
         $members = $this->getMemberTable()->fetchAll();
         $this->view->setVariables([
             'members' => $members,
@@ -162,8 +190,12 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return Response|ViewModel
+     */
     public function searchAction()
     {
+        $this->mustLogin();
         $name = $this->params()->fromPost('name');
         $from = $this->params()->fromPost('from');
         $to = $this->params()->fromPost('to');
@@ -180,6 +212,9 @@ class MemberController extends AbstractActionController
         return $this->view;
     }
 
+    /**
+     * @return MemberTable
+     */
     private function getMemberTable()
     {
         if (!$this->memberTable) {
@@ -189,6 +224,9 @@ class MemberController extends AbstractActionController
         return $this->memberTable;
     }
 
+    /**
+     * @return PrememberTable
+     */
     private function getPrememberTable()
     {
         if (!$this->prememberTable) {
@@ -198,6 +236,9 @@ class MemberController extends AbstractActionController
         return $this->prememberTable;
     }
 
+    /**
+     * @return BusinessClassificationTable
+     */
     private function getBusinessClassificationTable()
     {
         if (!$this->business_classificationTable) {
@@ -207,6 +248,9 @@ class MemberController extends AbstractActionController
         return $this->business_classificationTable;
     }
 
+    /**
+     * @return Array BusinessClassification[ID => 名前]
+     */
     private function getArrayBusinessClassification()
     {
         $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
@@ -217,6 +261,9 @@ class MemberController extends AbstractActionController
         return $bc_ary;
     }
 
+    /**
+     * @return InputFilter
+     */
     private function createInputFilter()
     {
         $spec = $this->getAddService()->getInputSpec();
@@ -225,6 +272,9 @@ class MemberController extends AbstractActionController
         return $inputs;
     }
 
+    /**
+     * @return AddService
+     */
     private function getAddService()
     {
         if (!$this->addService) {
@@ -234,6 +284,9 @@ class MemberController extends AbstractActionController
         return $this->addService;
     }
 
+    /**
+     * @return MailService
+     */
     private function getMailService()
     {
         if (!$this->mailService) {
@@ -243,6 +296,9 @@ class MemberController extends AbstractActionController
         return $this->mailService;
     }
 
+    /**
+     * @return Connection
+     */
     private function getConnection()
     {
         $sm = $this->getServiceLocator();
@@ -250,5 +306,17 @@ class MemberController extends AbstractActionController
         $conn = $adapter->getDriver()->getConnection();
         return $conn;
     }
+
+    /**
+     * @return Response
+     */
+    private function mustLogin()
+    {
+        $auth = new Auth($this->getServiceLocator());
+        if(!$auth->checkLogin()){
+            return($this->redirect()->toUrl('/auth/loginform'));
+        }
+    }
+
 }
 

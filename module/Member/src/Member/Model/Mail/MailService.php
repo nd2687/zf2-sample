@@ -23,11 +23,17 @@ class MailService
         'port' => '1025',
     ];
 
+    /** @var ViewModel $view */
     private $view;
+    /** @var Message $message */
     private $message;
+    /** @var SmtpTransport $transport */
     private $transport;
+    /** @var SmtpOptions $options */
     private $options;
+    /** @var PhpRenderer $renderer */
     private $renderer;
+    /** @var TemplateMapResolver $resolver */
     private $resolver;
 
     public function __construct()
@@ -40,6 +46,9 @@ class MailService
         $this->resolver  = new TemplateMapResolver();
     }
 
+    /**
+     * @param Array $userdata
+     */
     public function sendMail($userdata)
     {
         $this->resolver->setMap(array(
@@ -64,6 +73,9 @@ class MailService
         $this->send($this->message);
     }
 
+    /**
+     * @param Message $message
+     */
     private function send($message)
     {
         $this->transport->setOptions($this->options);
