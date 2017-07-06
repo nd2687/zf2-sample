@@ -23,6 +23,7 @@ class MemberController extends AbstractActionController
     protected $memberTable;
     protected $business_classificationTable;
     protected $addService;
+    protected $mailService;
     protected $view;
 
     public function onDispatch(MvcEvent $e)
@@ -98,7 +99,7 @@ class MemberController extends AbstractActionController
             try {
                 $conn->beginTransaction();
                 $this->getPrememberTable()->savePremember($premember);
-                $this->mail_to_premember($postData);
+                $this->getMailService()->sendMail($postData);
                 $conn->commit();
             } catch (Exception $e){
                 $conn->rollback();
@@ -210,37 +211,6 @@ class MemberController extends AbstractActionController
         return $this->business_classificationTable;
     }
 
-    private function mail_to_premember($userdata)
-    {
-        $message = new Message();
-        $message->setEncoding("UTF-8");
-        $message->addFrom("zf2-sample@example.com")
-                ->addTo($userdata["mail_address"])
-                ->setSubject("会員登録の確認"); // Subject 文字化け
-        $messageBody =<<<EOM
-{$userdata['login_id']}様
-
-会員登録ありがとうございます。
-下のリンクにアクセスして会員登録を完了してください。
-http://zf2kawano.local/member/checkPremember?login_id={$userdata["login_id"]}&link_pass={$userdata['link_pass']}
-
-このメールに覚えがない場合はメールを削除してください。
-
---
-会員システム
-
-EOM;
-        $message->setBody($messageBody);
-
-        $transport = new SmtpTransport();
-        $options   = new SmtpOptions(array(
-            'host'              => 'zf2kawano_mailcatcher_1',
-            'port'              => '1025',
-        ));
-        $transport->setOptions($options);
-        $transport->send($message);
-    }
-
     private function getArrayBusinessClassification()
     {
         $business_classifications = $this->getBusinessClassificationTable()->fetchAll();
@@ -266,6 +236,15 @@ EOM;
             $this->addService = $sm->get('Member\Model\Add\AddService');
         }
         return $this->addService;
+    }
+
+    private function getMailService()
+    {
+        if (!$this->mailService) {
+            $sm = $this->getServiceLocator();
+            $this->mailService = $sm->get('Member\Model\Mail\MailService');
+        }
+        return $this->mailService;
     }
 
     private function getConnection()

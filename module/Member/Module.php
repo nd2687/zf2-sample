@@ -8,6 +8,7 @@ use Member\Model\PrememberTable;
 use Member\Model\BusinessClassification;
 use Member\Model\BusinessClassificationTable;
 use Member\Model\Add\AddService;
+use Member\Model\Mail\MailService;
 use Member\Model\Auth as Auth;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
@@ -74,6 +75,10 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Premember());
                     return new TableGateway('premember', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Member\Model\Mail\MailService' => function () {
+                    $service = new MailService();
+                    return $service;
                 },
             ),
         );
