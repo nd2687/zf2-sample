@@ -36,7 +36,7 @@ class MemberController extends AbstractActionController
         $this->view = new ViewModel();
         $auth = new Auth($this->getServiceLocator());
         $this->view->logined = $auth->checkLogin();
-        $logined_member = json_decode(json_encode($auth->getLoginUser()), True); //stdClass to Array
+        $logined_member = json_decode(json_encode($auth->getLoginUser()), True); // stdClass to Array
         $this->view->logined_member = $logined_member;
         return parent::onDispatch($e);
     }
@@ -317,6 +317,4 @@ class MemberController extends AbstractActionController
             return($this->redirect()->toUrl('/auth/loginform'));
         }
     }
-
 }
-

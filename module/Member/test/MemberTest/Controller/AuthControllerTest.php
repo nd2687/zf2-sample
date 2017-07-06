@@ -13,6 +13,7 @@ class AuthControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
 
+    /** ログインフォームアクション200返す */
     public function testLoginformActionCanBeAccessed()
     {
         $this->dispatch('/auth/loginform');
@@ -24,6 +25,7 @@ class AuthControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('member');
     }
 
+    /** ログインアクション200返す */
     public function testLoginActionCanBeAccessed()
     {
         $this->dispatch('/auth/login');

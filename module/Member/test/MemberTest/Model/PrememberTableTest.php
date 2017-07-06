@@ -20,6 +20,7 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         'business_classification_id'  => '1'
     ];
 
+    /** fetchAllできる */
     public function testFetchAllReturnsAllPremembers()
     {
         $resultSet = new ResultSet();
@@ -40,6 +41,7 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($resultSet, $prememberTable->fetchAll());
     }
 
+    /** ログインIDで検索できる */
     public function testCanRetrieveAnPrememberByItsLoginId()
     {
         $premember = new Premember();
@@ -66,6 +68,7 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($premember, $prememberTable->findByLoginId(self::TEST_ARRAY['login_id']));
     }
 
+    /** メールアドレスで検索できる */
     public function testCanRetrieveAnPrememberByItsMailAddress()
     {
         $premember = new Premember();
@@ -92,6 +95,7 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($premember, $prememberTable->findByMailAddress(self::TEST_ARRAY['mail_address']));
     }
 
+    /** mailAddressExists機能してるか */
     public function testmailAddressExists()
     {
         $premember = new Premember();
@@ -117,6 +121,7 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($prememberTable->mailAddressExists(self::TEST_ARRAY['mail_address']));
     }
 
+    /** loginIdExists機能してるか */
     public function testloginIdExists()
     {
         $premember = new Premember();

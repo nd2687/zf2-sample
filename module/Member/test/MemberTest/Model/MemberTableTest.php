@@ -20,6 +20,7 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         'business_classification_id'  => '1'
     ];
 
+    /** fetchAllできる */
     public function testFetchAllReturnsAllMembers()
     {
         $resultSet = new ResultSet();
@@ -40,6 +41,7 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($resultSet, $memberTable->fetchAll());
     }
 
+    /** ログインIDでselectできる */
     public function testCanRetrieveAnMemberByItsLoginId()
     {
         $member = new Member();
@@ -66,6 +68,7 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($member, $memberTable->findByLoginId(self::TEST_ARRAY['login_id']));
     }
 
+    /** メールアドレスでselectできる */
     public function testCanRetrieveAnMemberByItsMailAddress()
     {
         $member = new Member();
@@ -92,6 +95,7 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         $this->assertSame($member, $memberTable->findByMailAddress(self::TEST_ARRAY['mail_address']));
     }
 
+    /** mailAddressExistsメソッドの確認 */
     public function testmailAddressExists()
     {
         $member = new Member();
@@ -117,6 +121,7 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($memberTable->mailAddressExists(self::TEST_ARRAY['mail_address']));
     }
 
+    /** loginIdExistsメソッドの確認 */
     public function testloginIdExists()
     {
         $member = new Member();

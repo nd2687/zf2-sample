@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase;
 
 class MemberTest extends PHPUnit_Framework_TestCase
 {
+    /** 初期状態ではNullである */
     public function testMemberInitialState()
     {
         // include '/var/www/zf2kawano/config/application.config.php';
@@ -22,6 +23,7 @@ class MemberTest extends PHPUnit_Framework_TestCase
         $this->assertNull($member->business_classification_id, '"business_classification_id" should initially be null');
     }
 
+    /** 各パラメーターを入れたときセットされているか */
     public function testExchangeArraySetsPropertiesCorrectly()
     {
         $member = new Member();
@@ -50,6 +52,7 @@ class MemberTest extends PHPUnit_Framework_TestCase
         $this->assertSame($data['business_classification_id'], $member->business_classification_id, '"business_classification_id" was not set correctly');
     }
 
+    /** 引数なしでexchangeArray呼び出したときNull */
     public function testExchangeArraySetsPropertiesToNullIfKeysAreNotPresent()
     {
         $member = new Member();

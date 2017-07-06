@@ -57,6 +57,7 @@ class MemberControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('member');
     }
 
+    /** CompleteアクションでPOSTできる */
     public function testCompleteActionRedirectsAfterValidPost()
     {
         $prememberTableMock = $this->getMockBuilder('Member\Model\PrememberTable')
@@ -87,6 +88,7 @@ class MemberControllerTest extends AbstractHttpControllerTestCase
         $this->assertNotRedirect();
     }
 
+    /** Prememberアクションが200返す */
     public function testCheckPrememberActionCanBeAccessed()
     {
         $this->dispatch('/member/checkPremember');
@@ -98,37 +100,23 @@ class MemberControllerTest extends AbstractHttpControllerTestCase
         $this->assertMatchedRouteName('member');
     }
 
-    public function testSearchformActionCanBeAccessed()
+    /** ログインしてないときリダイレクトする */
+    public function testSearchformActionRedirectWhenNotLogin()
     {
-        $memberTableMock = $this->getMockBuilder('Member\Model\MemberTable')
-                                ->disableOriginalConstructor()
-                                ->getMock();
-
-        $memberTableMock->expects($this->once())
-                        ->method('fetchAll')
-                        ->will($this->returnValue(array()));
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Member\Model\MemberTable', $memberTableMock);
-
         $this->dispatch('/member/searchform');
-        $this->assertResponseStatusCode(200);
-
-        $this->assertModuleName('Member');
-        $this->assertControllerName('Member\Controller\Member');
-        $this->assertControllerClass('MemberController');
-        $this->assertMatchedRouteName('member');
+        $this->assertResponseStatusCode(302);
+        $this->assertRedirectTo('/auth/loginform');
     }
 
-    public function testSearchActionCanBeAccessed()
+    /** ログインしてないときリダイレクトする */
+    public function testSearchActionRedirectWhenNotLogin()
     {
         $this->dispatch('/member/search');
-        $this->assertResponseStatusCode(200);
-
-        $this->assertModuleName('Member');
-        $this->assertControllerName('Member\Controller\Member');
+        $this->assertResponseStatusCode(302);
         $this->assertControllerClass('MemberController');
-        $this->assertMatchedRouteName('member');
+        $this->assertRedirectTo('/auth/loginform');
     }
+
+    /** ログイン時にSearchform、Search 200返す */
+    /** pending */
 }

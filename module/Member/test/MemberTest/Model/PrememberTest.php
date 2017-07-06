@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase;
 
 class PrememberTest extends PHPUnit_Framework_TestCase
 {
+    /** 初期状態ではNULL */
     public function testPrememberInitialState()
     {
         // include '/var/www/zf2kawano/config/application.config.php';
@@ -22,6 +23,7 @@ class PrememberTest extends PHPUnit_Framework_TestCase
         $this->assertNull($premember->business_classification_id, '"business_classification_id" should initially be null');
     }
 
+    /** プロパティセット */
     public function testExchangeArraySetsPropertiesCorrectly()
     {
         $premember = new Premember();
@@ -50,6 +52,7 @@ class PrememberTest extends PHPUnit_Framework_TestCase
         $this->assertSame($data['business_classification_id'], $premember->business_classification_id, '"business_classification_id" was not set correctly');
     }
 
+    /** 引数なしでexchangeArray実行だとNULL */
     public function testExchangeArraySetsPropertiesToNullIfKeysAreNotPresent()
     {
         $premember = new Premember();
