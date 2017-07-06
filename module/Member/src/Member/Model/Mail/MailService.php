@@ -18,6 +18,10 @@ class MailService
         'from'     => 'zf2-sample@example.com',
         'subject'  => '会員登録の確認',
     ];
+    const SMTP_OPTIONS = [
+        'host' => 'zf2kawano_mailcatcher_1',
+        'port' => '1025',
+    ];
 
     private $view;
     private $message;
@@ -28,21 +32,18 @@ class MailService
 
     public function __construct()
     {
-        $this->view = new ViewModel();
-        $this->message = new Message();
+        $this->view      = new ViewModel();
+        $this->message   = new Message();
         $this->transport = new SmtpTransport();
-        $this->options = new SmtpOptions([
-            'host'              => 'zf2kawano_mailcatcher_1',
-            'port'              => '1025',
-        ]);
-        $this->renderer = new PhpRenderer();
-        $this->resolver = new TemplateMapResolver();
+        $this->options   = new SmtpOptions(self::SMTP_OPTIONS);
+        $this->renderer  = new PhpRenderer();
+        $this->resolver  = new TemplateMapResolver();
     }
 
     public function sendMail($userdata)
     {
         $this->resolver->setMap(array(
-                'mailTemplate' => __DIR__ . '/../../../../view/member/mail/body.phtml'
+            'mailTemplate' => __DIR__ . '/../../../../view/member/mail/body.phtml'
         ));
         $this->renderer->setResolver($this->resolver);
 
@@ -56,21 +57,16 @@ class MailService
         $messageBody->addPart($html);
 
         $this->message->setEncoding(self::MAIL['encoding'])
-                      ->addFrom(self::MAIL['from'])
-                      ->addTo($userdata['mail_address'])
-                      ->setSubject(self::MAIL['subject'])
-                      ->setBody($messageBody);
+                     ->addFrom(self::MAIL['from'])
+                     ->addTo($userdata['mail_address'])
+                     ->setSubject(self::MAIL['subject'])
+                     ->setBody($messageBody);
         $this->send($this->message);
     }
 
     private function send($message)
     {
-        $transport = new SmtpTransport();
-        $options   = new SmtpOptions(array(
-            'host'              => 'zf2kawano_mailcatcher_1',
-            'port'              => '1025',
-        ));
-        $transport->setOptions($options);
-        $transport->send($message);
+        $this->transport->setOptions($this->options);
+        $this->transport->send($message);
     }
 }
