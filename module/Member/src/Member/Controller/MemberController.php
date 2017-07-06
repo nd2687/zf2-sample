@@ -8,7 +8,6 @@ use Member\Model\Member;
 use Member\Model\Premember;
 use Member\Model\Add;
 use Member\Model\BusinessClassification;
-use Member\Model\Add\AddService;
 use Member\Model\Member\MemberTable;
 use Member\Model\Member\PrememberTable;
 use Member\Model\Auth as Auth;
