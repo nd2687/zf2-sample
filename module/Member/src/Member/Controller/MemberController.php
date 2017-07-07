@@ -120,7 +120,7 @@ class MemberController extends AbstractActionController
                 $conn->commit();
             } catch (Exception $e){
                 $conn->rollback();
-                echo $e->getMessage()."\n";
+                throw $e;
             }
             $this->view->setVariables([
                 'inputs' => $inputs->getInputs(),
@@ -160,7 +160,7 @@ class MemberController extends AbstractActionController
                     $conn->commit();
                 } catch (Exception $e) {
                     $conn->rollback();
-                    echo $e->getMessage()."\n";
+                    throw $e;
                 }
                 $message = "登録完了しました。ログインしてください。";
             } else {
