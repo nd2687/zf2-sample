@@ -1,12 +1,5 @@
 <?php
 return array(
-    'controllers' => array(
-        'invokables' => array(
-            'Member\Controller\Member' => 'Member\Controller\MemberController',
-            'Member\Controller\Auth' => 'Member\Controller\AuthController',
-        ),
-    ),
-
     // The following section is new and should be added to your file
     'router' => array(
         'routes' => array(
@@ -33,24 +26,46 @@ return array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
         ),
+        'aliases' => array(
+            'translator' => 'MvcTranslator',
+        ),
         // 'invokables' => [
         //     'AddService' => \Member\Model\Add\AddService::class,
         // ],
     ),
 
+    'controllers' => array(
+        'invokables' => array(
+            'Member\Controller\Member' => 'Member\Controller\MemberController',
+            'Member\Controller\Auth' => 'Member\Controller\AuthController',
+        ),
+    ),
+
     'view_manager' => array(
-        // 'template_map' => array(
-        //     'layout/layout' => __DIR__ . '/../view/layout/layout.phtml'
-        // ),
+        'display_not_found_reason' => true,
+        'display_exceptions'       => true,
+        'doctype'                  => 'HTML5',
+        'not_found_template'       => 'error/404',
+        'exception_template'       => 'error/index',
+        'template_map' => array(
+            'layout/layout'           => __DIR__ . '/../view/layout/layout.twig',
+            'member/index'            => __DIR__ . '/../view/member/index.twig',
+            'error/404'               => __DIR__ . '/../view/error/404.twig',
+            'error/index'             => __DIR__ . '/../view/error/index.twig',
+        ),
         'template_path_stack' => array(
             'member' => __DIR__ . '/../view',
         ),
     ),
-    //
-    // 'module_layouts' => array(
-    //   'Member' => array(
-    //     'default' => 'layout/layout',
-    //     'check' => 'layout/layout'
-    //   )
-    // ),
+
+    'translator' => array(
+        'locale' => 'en_US',
+        'translation_file_patterns' => array(
+            array(
+                'type'     => 'gettext',
+                'base_dir' => __DIR__ . '/../language',
+                'pattern'  => '%s.mo',
+            ),
+        ),
+    ),
 );

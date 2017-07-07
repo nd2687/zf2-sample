@@ -12,9 +12,18 @@ use Member\Model\Mail\MailService;
 use Member\Model\Auth as Auth;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\ModuleRouteListener;
 
 class Module
 {
+    public function onBootstrap(MvcEvent $e)
+    {
+        $eventManager        = $e->getApplication()->getEventManager();
+        $moduleRouteListener = new ModuleRouteListener();
+        $moduleRouteListener->attach($eventManager);
+    }
+
     public function getAutoloaderConfig()
     {
         return array(
