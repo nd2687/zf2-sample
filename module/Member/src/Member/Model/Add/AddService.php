@@ -12,10 +12,6 @@ class AddService
     private $prememberTable;
     /** @var MemberTable $memberTable */
     private $memberTable;
-    /** @var PrememberTable $pmt */
-    private $pmt;
-    /** @var MemberTable $mt */
-    private $mt;
 
     /**
      * @param PrememberTable $pmt
