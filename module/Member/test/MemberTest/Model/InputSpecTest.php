@@ -123,9 +123,8 @@ class InputSpecTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("Value is required and can't be empty", current($messages));
     }
 
-    /** TODO check */
     /** パスワード確認 */
-    public function testPasswordConfirmation_CharMin()
+    public function testPasswordConfirmationCheck()
     {
         $input = $this->inputSpec->passwordConfirmation();
         $input->setValue('abc');
