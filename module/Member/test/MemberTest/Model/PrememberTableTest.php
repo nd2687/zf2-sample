@@ -5,8 +5,9 @@ use Member\Model\PrememberTable;
 use Member\Model\Premember;
 use Zend\Db\ResultSet\ResultSet;
 use PHPUnit_Framework_TestCase;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-class PrememberTableTest extends PHPUnit_Framework_TestCase
+class PrememberTableTest extends AbstractHttpControllerTestCase
 {
     const TEST_ARRAY = [
         'id'                          => 123,
@@ -19,6 +20,40 @@ class PrememberTableTest extends PHPUnit_Framework_TestCase
         'birthday'                    => '2017-07-04',
         'business_classification_id'  => '1'
     ];
+
+    private $prememberTable;
+
+    public function setUp()
+    {
+        $this->setApplicationConfig(
+            include '/var/www/zf2kawano/config/application.config.php'
+        );
+        parent::setUp();
+    }
+
+    private function createSequentialData($index)
+    {
+        $ary                 = self::TEST_ARRAY;
+        $ary['login_id']     = $ary['login_id'].(string)$index;
+        $ary['mail_address'] = $ary['mail_address'].(string)$index;
+        return (object)$ary;
+    }
+
+    /** テストデータベースにインサートしてログインIDとメールアドレスが存在しているか */
+    public function testLoginIdExistsAndMailAddressExistsWhenInsertData()
+    {
+        $serviceManager = $this->getApplicationServiceLocator();
+        $this->prememberTable = $serviceManager->get('Member\Model\MemberTable');
+
+        $int = $this->prememberTable->fetchAll()->count();
+        $int = $int + 1;
+        $this->prememberTable->saveMember(self::createSequentialData($int));
+
+        $this->assertTrue($this->prememberTable->loginIdExists(self::TEST_ARRAY['login_id'].(string)$int));
+        $this->assertFalse($this->prememberTable->loginIdExists('not-exist-id'));
+        $this->assertTrue($this->prememberTable->mailAddressExists(self::TEST_ARRAY['mail_address'].(string)$int));
+        $this->assertFalse($this->prememberTable->mailAddressExists('not-exist-mail'));
+    }
 
     /** fetchAllできる */
     public function testFetchAllReturnsAllPremembers()

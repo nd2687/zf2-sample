@@ -5,8 +5,9 @@ use Member\Model\MemberTable;
 use Member\Model\Member;
 use Zend\Db\ResultSet\ResultSet;
 use PHPUnit_Framework_TestCase;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-class MemberTableTest extends PHPUnit_Framework_TestCase
+class MemberTableTest extends AbstractHttpControllerTestCase
 {
     const TEST_ARRAY = [
         'id'                          => 123,
@@ -19,6 +20,40 @@ class MemberTableTest extends PHPUnit_Framework_TestCase
         'birthday'                    => '2017-07-04',
         'business_classification_id'  => '1'
     ];
+
+    private $memberTable;
+
+    public function setUp()
+    {
+        $this->setApplicationConfig(
+            include '/var/www/zf2kawano/config/application.config.php'
+        );
+        parent::setUp();
+    }
+
+    private function createSequentialData($index)
+    {
+        $ary                 = self::TEST_ARRAY;
+        $ary['login_id']     = $ary['login_id'].(string)$index;
+        $ary['mail_address'] = $ary['mail_address'].(string)$index;
+        return (object)$ary;
+    }
+
+    /** テストデータベースにインサートしてログインIDとメールアドレスが存在しているか */
+    public function testLoginIdExistsAndMailAddressExistsWhenInsertData()
+    {
+        $serviceManager = $this->getApplicationServiceLocator();
+        $this->memberTable = $serviceManager->get('Member\Model\MemberTable');
+
+        $int = $this->memberTable->fetchAll()->count();
+        $int = $int + 1;
+        $this->memberTable->saveMember(self::createSequentialData($int));
+
+        $this->assertTrue($this->memberTable->loginIdExists(self::TEST_ARRAY['login_id'].(string)$int));
+        $this->assertFalse($this->memberTable->loginIdExists('not-exist-id'));
+        $this->assertTrue($this->memberTable->mailAddressExists(self::TEST_ARRAY['mail_address'].(string)$int));
+        $this->assertFalse($this->memberTable->mailAddressExists('not-exist-mail'));
+    }
 
     /** fetchAllできる */
     public function testFetchAllReturnsAllMembers()
