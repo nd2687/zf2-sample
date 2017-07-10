@@ -18,6 +18,8 @@ class MemberController extends AbstractActionController
 {
     /** @var MemberTable $memberTable */
     protected $memberTable;
+    /** @var PrememberTable $prememberTable */
+    protected $prememberTable;
     /** @var BusinessClassificationTable $business_classificationTable */
     protected $business_classificationTable;
     /** @var AddService $addService */
@@ -46,6 +48,7 @@ class MemberController extends AbstractActionController
      */
     public function indexAction()
     {
+        $env = getenv('APP_ENV') ?: 'production';
         return $this->view;
     }
 
