@@ -3,9 +3,6 @@
 return array(
     'db' => array(
         'driver'         => 'Pdo_Mysql',
-        'username'       => 'root',
-        'password'       => 'sample',
-        'port'           => 3306,
         'database'       => 'sample_test',
         'hostname'       => 'db',
         'driver_options' => array(

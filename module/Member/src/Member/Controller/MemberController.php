@@ -48,7 +48,6 @@ class MemberController extends AbstractActionController
      */
     public function indexAction()
     {
-        $env = getenv('APP_ENV') ?: 'production';
         return $this->view;
     }
 
