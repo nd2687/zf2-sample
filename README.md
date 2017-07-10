@@ -88,5 +88,5 @@ error_log(print_r('****'."\n",true),3,'./logs/debug.log');
 UnitTest実行
 
 ```
-container_app_path$ ./vendor/bin/phpunit --color ./module/Member/test/
+container_app_path$ ./vendor/bin/phpunit --bootstrap ./module/Member/test/Bootstrap.php --color ./module/Member/test/
 ```
