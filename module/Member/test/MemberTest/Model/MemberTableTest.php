@@ -21,6 +21,7 @@ class MemberTableTest extends AbstractHttpControllerTestCase
         'business_classification_id'  => '1'
     ];
 
+    /** @var MemberTable $memberTable */
     private $memberTable;
 
     public function setUp()
@@ -28,6 +29,10 @@ class MemberTableTest extends AbstractHttpControllerTestCase
         $this->setApplicationConfig(
             include '/var/www/zf2kawano/config/application.config.php'
         );
+        $serviceManager = $this->getApplicationServiceLocator();
+        $this->memberTable = $serviceManager->get('Member\Model\MemberTable');
+        $this->memberTable->delete([]);
+        $this->memberTable->saveMember((object)self::TEST_ARRAY);
         parent::setUp();
     }
 
@@ -42,9 +47,6 @@ class MemberTableTest extends AbstractHttpControllerTestCase
     /** テストデータベースにインサートしてログインIDとメールアドレスが存在しているか */
     public function testLoginIdExistsAndMailAddressExistsWhenInsertData()
     {
-        $serviceManager = $this->getApplicationServiceLocator();
-        $this->memberTable = $serviceManager->get('Member\Model\MemberTable');
-
         $int = $this->memberTable->fetchAll()->count();
         $int = $int + 1;
         $this->memberTable->saveMember(self::createSequentialData($int));
@@ -58,127 +60,30 @@ class MemberTableTest extends AbstractHttpControllerTestCase
     /** fetchAllできる */
     public function testFetchAllReturnsAllMembers()
     {
-        $resultSet = new ResultSet();
-        $mockTableGateway = $this->createMock(
-            'Zend\Db\TableGateway\TableGateway',
-            array('select'),
-            array(),
-            '',
-            false
-        );
-        $mockTableGateway->expects($this->once())
-                         ->method('select')
-                         ->with()
-                         ->will($this->returnValue($resultSet));
-
-        $memberTable = new MemberTable($mockTableGateway);
-
-        $this->assertSame($resultSet, $memberTable->fetchAll());
+        $this->assertSame(1, $this->memberTable->fetchAll()->count());
     }
 
     /** ログインIDでselectできる */
     public function testCanRetrieveAnMemberByItsLoginId()
     {
-        $member = new Member();
-        $member->exchangeArray(self::TEST_ARRAY);
-
-        $resultSet = new ResultSet();
-        $resultSet->setArrayObjectPrototype(new Member());
-        $resultSet->initialize(array($member));
-
-        $mockTableGateway = $this->createMock(
-            'Zend\Db\TableGateway\TableGateway',
-            array('select'),
-            array(),
-            '',
-            false
-        );
-        $mockTableGateway->expects($this->once())
-                         ->method('select')
-                         ->with(array('login_id' => self::TEST_ARRAY['login_id']))
-                         ->will($this->returnValue($resultSet));
-
-        $memberTable = new MemberTable($mockTableGateway);
-
-        $this->assertSame($member, $memberTable->findByLoginId(self::TEST_ARRAY['login_id']));
+        $this->assertSame(self::TEST_ARRAY['login_id'], $this->memberTable->findByLoginId(self::TEST_ARRAY['login_id'])->login_id);
     }
 
     /** メールアドレスでselectできる */
     public function testCanRetrieveAnMemberByItsMailAddress()
     {
-        $member = new Member();
-        $member->exchangeArray(self::TEST_ARRAY);
-
-        $resultSet = new ResultSet();
-        $resultSet->setArrayObjectPrototype(new Member());
-        $resultSet->initialize(array($member));
-
-        $mockTableGateway = $this->createMock(
-            'Zend\Db\TableGateway\TableGateway',
-            array('select'),
-            array(),
-            '',
-            false
-        );
-        $mockTableGateway->expects($this->once())
-                         ->method('select')
-                         ->with(array('mail_address' => self::TEST_ARRAY['mail_address']))
-                         ->will($this->returnValue($resultSet));
-
-        $memberTable = new MemberTable($mockTableGateway);
-
-        $this->assertSame($member, $memberTable->findByMailAddress(self::TEST_ARRAY['mail_address']));
+        $this->assertSame(self::TEST_ARRAY['login_id'], $this->memberTable->findByMailAddress(self::TEST_ARRAY['mail_address'])->login_id);
     }
 
     /** mailAddressExistsメソッドの確認 */
     public function testmailAddressExists()
     {
-        $member = new Member();
-        $member->exchangeArray(self::TEST_ARRAY);
-
-        $resultSet = new ResultSet();
-        $resultSet->setArrayObjectPrototype(new Member());
-        $resultSet->initialize(array($member));
-
-        $mockTableGateway = $this->createMock(
-            'Zend\Db\TableGateway\TableGateway',
-            array('select'),
-            array(),
-            '',
-            false
-        );
-        $mockTableGateway->expects($this->once())
-                         ->method('select')
-                         ->with(array('mail_address' => self::TEST_ARRAY['mail_address']))
-                         ->will($this->returnValue($resultSet));
-
-        $memberTable = new MemberTable($mockTableGateway);
-        $this->assertTrue($memberTable->mailAddressExists(self::TEST_ARRAY['mail_address']));
+        $this->assertTrue($this->memberTable->mailAddressExists(self::TEST_ARRAY['mail_address']));
     }
 
     /** loginIdExistsメソッドの確認 */
     public function testloginIdExists()
     {
-        $member = new Member();
-        $member->exchangeArray(self::TEST_ARRAY);
-
-        $resultSet = new ResultSet();
-        $resultSet->setArrayObjectPrototype(new Member());
-        $resultSet->initialize(array($member));
-
-        $mockTableGateway = $this->createMock(
-            'Zend\Db\TableGateway\TableGateway',
-            array('select'),
-            array(),
-            '',
-            false
-        );
-        $mockTableGateway->expects($this->once())
-                         ->method('select')
-                         ->with(array('login_id' => self::TEST_ARRAY['login_id']))
-                         ->will($this->returnValue($resultSet));
-
-        $memberTable = new MemberTable($mockTableGateway);
-        $this->assertTrue($memberTable->loginIdExists(self::TEST_ARRAY['login_id']));
+        $this->assertTrue($this->memberTable->loginIdExists(self::TEST_ARRAY['login_id']));
     }
 }

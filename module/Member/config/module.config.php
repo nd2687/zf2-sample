@@ -29,9 +29,9 @@ return array(
         'aliases' => array(
             'translator' => 'MvcTranslator',
         ),
-        // 'invokables' => [
-        //     'AddService' => \Member\Model\Add\AddService::class,
-        // ],
+        'factories' => [
+            'Zend\Db\Adapter\AdapterInterface' => 'Zend\Db\Adapter\AdapterServiceFactory',
+        ],
     ),
 
     'controllers' => array(

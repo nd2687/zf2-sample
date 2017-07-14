@@ -14,6 +14,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\ModuleRouteListener;
+use Zend\Db\TableGateway\Feature\GlobalAdapterFeature as GlobalAdapterFeature;
 
 class Module
 {
@@ -22,6 +23,10 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        $serviceManager = $e->getApplication()->getServiceManager();
+        /** @var AdapterInterface $adapter */
+        $adapter = $serviceManager->get('Zend\Db\Adapter\AdapterInterface');
+        GlobalAdapterFeature::setStaticAdapter($adapter);
     }
 
     public function getAutoloaderConfig()

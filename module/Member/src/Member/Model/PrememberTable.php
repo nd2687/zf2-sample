@@ -2,16 +2,20 @@
 namespace Member\Model;
 
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\TableGateway\AbstractTableGateway;
+use Zend\Db\TableGateway\Feature;
 
-class PrememberTable
+class PrememberTable extends AbstractTableGateway
 {
-    /** @var TableGateway $tableGateway */
-    protected $tableGateway;
+    /** @var PrememberTable $table */
+    protected $table;
 
-    /** @param TableGateway $tableGateway */
-    public function __construct(TableGateway $tableGateway)
+    public function __construct()
     {
-        $this->tableGateway = $tableGateway;
+        $this->table = 'premember';
+        $this->featureSet = new Feature\FeatureSet();
+        $this->featureSet->addFeature(new Feature\GlobalAdapterFeature());
+        $this->initialize();
     }
 
     /**
@@ -25,11 +29,12 @@ class PrememberTable
 
     /**
      * @param String $loginId
-     * @return Member
+     * @return Premember
      */
     public function findByLoginId($loginId)
     {
-        $rowset = $this->tableGateway->select(['login_id' => $loginId]);
+        $this->table = new PrememberTable();
+        $rowset = $this->table->select(['login_id' => $loginId]);
         return $rowset->current();
     }
 
@@ -44,11 +49,12 @@ class PrememberTable
 
     /**
      * @param String $mailAddress
-     * @return Member
+     * @return Premember
      */
     public function findByMailAddress($mailAddress)
     {
-        $rowset = $this->tableGateway->select(['mail_address' => $mailAddress]);
+        $this->table = new PrememberTable();
+        $rowset = $this->table->select(['mail_address' => $mailAddress]);
         return $rowset->current();
     }
 
@@ -57,7 +63,8 @@ class PrememberTable
      */
     public function fetchAll()
     {
-        $resultSet = $this->tableGateway->select();
+        $this->table = new PrememberTable();
+        $resultSet = $this->table->select();
         return $resultSet;
     }
 
@@ -82,8 +89,9 @@ class PrememberTable
 
     public function getPremember($id)
     {
-        $id  = (int) $id;
-        $rowset = $this->tableGateway->select(array('id' => $id));
+        $this->table = new PrememberTable();
+        $id = (int) $id;
+        $rowset = $this->table->select(array('id' => $id));
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception("Could not find row $id");
@@ -91,34 +99,32 @@ class PrememberTable
         return $row;
     }
 
-    public function savePremember(Premember $premember)
+    public function savePremember($premember)
     {
+        $this->table = new PrememberTable();
         $data = array(
-            'login_id' => $premember->login_id,
-            'password'  => $premember->password,
-            'name' => $premember->name,
-            'name_kana' => $premember->name_kana,
-            'mail_address' => $premember->mail_address,
-            'birthday' => $premember->birthday,
+            'login_id'                   => $premember->login_id,
+            'password'                   => $premember->password,
+            'name'                       => $premember->name,
+            'name_kana'                  => $premember->name_kana,
+            'mail_address'               => $premember->mail_address,
+            'birthday'                   => $premember->birthday,
             'business_classification_id' => $premember->business_classification_id,
-            'link_pass' => $premember->link_pass,
-            'expired_at' => $premember->expired_at,
+            'link_pass'                  => $premember->link_pass,
+            'expired_at'                 => $premember->expired_at,
         );
 
-        $id = (int)$premember->id;
-        if ($id == 0) {
-            $this->tableGateway->insert($data);
+        $loginId = $premember->login_id;
+        if (!$this->loginIdExists($loginId)) {
+            $this->table->insert($data);
         } else {
-            if ($this->getPremember($id)) {
-                $this->tableGateway->update($data, array('id' => $id));
-            } else {
-                throw new \Exception('Form id does not exist');
-            }
+            throw new \Exception('Fatal error. login_id is already exists.');
         }
     }
 
     public function deletePremember($id)
     {
-        $this->tableGateway->delete(array('id' => $id));
+        $this->table = new PrememberTable();
+        $this->table->delete(array('id' => $id));
     }
 }

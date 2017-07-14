@@ -5,10 +5,10 @@ namespace MemberTest;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Mvc\Service\ServiceManagerConfig;
 use Zend\ServiceManager\ServiceManager;
-use RuntimeException;
+use Zend\Db\TableGateway\Feature\GlobalAdapterFeature;
+use Zend\Db\Adapter\AdapterInterface;
 
 error_reporting(E_ALL | E_STRICT);
-chdir(__DIR__);
 
 /**
  * Test bootstrap, for setting up autoloading
@@ -17,39 +17,36 @@ class Bootstrap
 {
     protected static $serviceManager;
 
+    public static function getApplicationConfig()
+    {
+        return require('config/application.config.php');
+    }
+
     public static function init()
     {
         putenv("APP_ENV=test");
-        $zf2ModulePaths = array(dirname(dirname(__DIR__)));
-        if (($path = static::findParentPath('vendor'))) {
-            $zf2ModulePaths[] = $path;
-        }
-        if (($path = static::findParentPath('module')) !== $zf2ModulePaths[0]) {
-            $zf2ModulePaths[] = $path;
-        }
 
+        self::chroot();
         static::initAutoloader();
 
-        // use ModuleManager to load this module and it's dependencies
-        $config = array(
-            'module_listener_options' => array(
-                'module_paths' => $zf2ModulePaths,
-            ),
-            'modules' => array(
-                'Member'
-            )
-        );
+        $config = self::getApplicationConfig();
 
         $serviceManager = new ServiceManager(new ServiceManagerConfig());
+        static::$serviceManager = $serviceManager;
         $serviceManager->setService('ApplicationConfig', $config);
         $serviceManager->get('ModuleManager')->loadModules();
-        static::$serviceManager = $serviceManager;
+
+        $adapter = $serviceManager->get('Zend\Db\Adapter\AdapterInterface');
+        GlobalAdapterFeature::setStaticAdapter($adapter);
     }
 
     public static function chroot()
     {
-        $rootPath = dirname(static::findParentPath('module'));
-        chdir($rootPath);
+        $root = implode(
+            DIRECTORY_SEPARATOR,
+            array_merge([__DIR__], array_fill(0, 3, '..'))
+        );
+        chdir($root);
     }
 
     public static function getServiceManager()
@@ -62,13 +59,12 @@ class Bootstrap
         $vendorPath = static::findParentPath('vendor');
 
         if (file_exists($vendorPath.'/autoload.php')) {
-            include $vendorPath.'/autoload.php';
+            $loader = include $vendorPath.'/autoload.php';
         }
 
-        if (! class_exists('Zend\Loader\AutoloaderFactory')) {
-            throw new RuntimeException(
-                'Unable to load ZF2. Run `php composer.phar install`'
-            );
+        if (!isset($loader)) {
+            $msg = 'vendor/autoload.php could not be found. Did you run `php composer.phar install`?';
+            throw new \RuntimeException($msg);
         }
 
         AutoloaderFactory::factory(array(
@@ -97,4 +93,3 @@ class Bootstrap
 }
 
 Bootstrap::init();
-Bootstrap::chroot();

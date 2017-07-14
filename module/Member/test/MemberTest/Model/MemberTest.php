@@ -9,7 +9,6 @@ class MemberTest extends PHPUnit_Framework_TestCase
     /** 初期状態ではNullである */
     public function testMemberInitialState()
     {
-        // include '/var/www/zf2kawano/config/application.config.php';
         $member = new Member();
 
         $this->assertNull($member->id,                         '"id" should initially be null');

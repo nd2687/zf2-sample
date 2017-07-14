@@ -2,18 +2,20 @@
 namespace Member\Model;
 
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\TableGateway\AbstractTableGateway;
+use Zend\Db\TableGateway\Feature;
 
-class MemberTable
+class MemberTable extends AbstractTableGateway
 {
-    /** @var TableGateway $tableGateway */
-    protected $tableGateway;
+    /** @var MemberTable $table */
+    protected $table;
 
-    /**
-     * @param TableGateway $tableGateway
-     */
-    public function __construct(TableGateway $tableGateway)
+    public function __construct()
     {
-        $this->tableGateway = $tableGateway;
+        $this->table = 'member';
+        $this->featureSet = new Feature\FeatureSet();
+        $this->featureSet->addFeature(new Feature\GlobalAdapterFeature());
+        $this->initialize();
     }
 
     /**
@@ -31,7 +33,8 @@ class MemberTable
      */
     public function findByLoginId($loginId)
     {
-        $rowset = $this->tableGateway->select(['login_id' => $loginId]);
+        $this->table = new MemberTable();
+        $rowset = $this->table->select(['login_id' => $loginId]);
         return $rowset->current();
     }
 
@@ -50,7 +53,8 @@ class MemberTable
      */
     public function findByMailAddress($mailAddress)
     {
-        $rowset = $this->tableGateway->select(['mail_address' => $mailAddress]);
+        $this->table = new MemberTable();
+        $rowset = $this->table->select(['mail_address' => $mailAddress]);
         return $rowset->current();
     }
 
@@ -59,7 +63,8 @@ class MemberTable
      */
     public function fetchAll()
     {
-        $resultSet = $this->tableGateway->select();
+        $this->table = new MemberTable();
+        $resultSet = $this->table->select();
         return $resultSet;
     }
 
@@ -71,7 +76,8 @@ class MemberTable
      */
     public function searchMember($name, $from, $to)
     {
-        $select = $this->tableGateway->getSql()->select();
+        $this->table = new MemberTable();
+        $select = $this->table->getSql()->select();
         if (!empty($name)) {
             $select->where
                 ->like('name', '%' . $name . '%')
@@ -81,7 +87,7 @@ class MemberTable
         if (!empty($from) || !empty($to)) {
             $select->where->between('birthday', $from, $to);
         }
-        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet = $this->table->selectWith($select);
         return $resultSet;
     }
 
@@ -90,6 +96,7 @@ class MemberTable
      */
     public function saveMember($member)
     {
+        $this->table = new MemberTable();
         $data = array(
             'login_id'                   => $member->login_id,
             'password'                   => $member->password,
@@ -102,7 +109,7 @@ class MemberTable
 
         $loginId = $member->login_id;
         if (!$this->loginIdExists($loginId)) {
-            $this->tableGateway->insert($data);
+            $this->table->insert($data);
         } else {
             throw new \Exception('Fatal error. login_id is already exists.');
         }
@@ -113,6 +120,7 @@ class MemberTable
      */
     public function deleteMember($id)
     {
-        $this->tableGateway->delete(array('id' => $id));
+        $this->table = new MemberTable();
+        $this->table->delete(array('id' => $id));
     }
 }
