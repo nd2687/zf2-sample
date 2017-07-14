@@ -7,9 +7,6 @@ use Zend\Db\TableGateway\Feature;
 
 class PrememberTable extends AbstractTableGateway
 {
-    /** @var PrememberTable $table */
-    protected $table;
-
     public function __construct()
     {
         $this->table = 'premember';
@@ -33,8 +30,7 @@ class PrememberTable extends AbstractTableGateway
      */
     public function findByLoginId($loginId)
     {
-        $this->table = new PrememberTable();
-        $rowset = $this->table->select(['login_id' => $loginId]);
+        $rowset = $this->select(['login_id' => $loginId]);
         return $rowset->current();
     }
 
@@ -53,8 +49,7 @@ class PrememberTable extends AbstractTableGateway
      */
     public function findByMailAddress($mailAddress)
     {
-        $this->table = new PrememberTable();
-        $rowset = $this->table->select(['mail_address' => $mailAddress]);
+        $rowset = $this->select(['mail_address' => $mailAddress]);
         return $rowset->current();
     }
 
@@ -63,8 +58,7 @@ class PrememberTable extends AbstractTableGateway
      */
     public function fetchAll()
     {
-        $this->table = new PrememberTable();
-        $resultSet = $this->table->select();
+        $resultSet = $this->select();
         return $resultSet;
     }
 
@@ -89,9 +83,8 @@ class PrememberTable extends AbstractTableGateway
 
     public function getPremember($id)
     {
-        $this->table = new PrememberTable();
         $id = (int) $id;
-        $rowset = $this->table->select(array('id' => $id));
+        $rowset = $this->select(array('id' => $id));
         $row = $rowset->current();
         if (!$row) {
             throw new \Exception("Could not find row $id");
@@ -101,7 +94,6 @@ class PrememberTable extends AbstractTableGateway
 
     public function savePremember($premember)
     {
-        $this->table = new PrememberTable();
         $data = array(
             'login_id'                   => $premember->login_id,
             'password'                   => $premember->password,
@@ -116,7 +108,7 @@ class PrememberTable extends AbstractTableGateway
 
         $loginId = $premember->login_id;
         if (!$this->loginIdExists($loginId)) {
-            $this->table->insert($data);
+            $this->insert($data);
         } else {
             throw new \Exception('Fatal error. login_id is already exists.');
         }
@@ -124,7 +116,6 @@ class PrememberTable extends AbstractTableGateway
 
     public function deletePremember($id)
     {
-        $this->table = new PrememberTable();
-        $this->table->delete(array('id' => $id));
+        $this->delete(array('id' => $id));
     }
 }

@@ -7,9 +7,6 @@ use Zend\Db\TableGateway\Feature;
 
 class MemberTable extends AbstractTableGateway
 {
-    /** @var MemberTable $table */
-    protected $table;
-
     public function __construct()
     {
         $this->table = 'member';
@@ -33,8 +30,7 @@ class MemberTable extends AbstractTableGateway
      */
     public function findByLoginId($loginId)
     {
-        $this->table = new MemberTable();
-        $rowset = $this->table->select(['login_id' => $loginId]);
+        $rowset = $this->select(['login_id' => $loginId]);
         return $rowset->current();
     }
 
@@ -53,8 +49,7 @@ class MemberTable extends AbstractTableGateway
      */
     public function findByMailAddress($mailAddress)
     {
-        $this->table = new MemberTable();
-        $rowset = $this->table->select(['mail_address' => $mailAddress]);
+        $rowset = $this->select(['mail_address' => $mailAddress]);
         return $rowset->current();
     }
 
@@ -63,8 +58,7 @@ class MemberTable extends AbstractTableGateway
      */
     public function fetchAll()
     {
-        $this->table = new MemberTable();
-        $resultSet = $this->table->select();
+        $resultSet = $this->select();
         return $resultSet;
     }
 
@@ -76,8 +70,7 @@ class MemberTable extends AbstractTableGateway
      */
     public function searchMember($name, $from, $to)
     {
-        $this->table = new MemberTable();
-        $select = $this->table->getSql()->select();
+        $select = $this->getSql()->select();
         if (!empty($name)) {
             $select->where
                 ->like('name', '%' . $name . '%')
@@ -87,7 +80,7 @@ class MemberTable extends AbstractTableGateway
         if (!empty($from) || !empty($to)) {
             $select->where->between('birthday', $from, $to);
         }
-        $resultSet = $this->table->selectWith($select);
+        $resultSet = $this->selectWith($select);
         return $resultSet;
     }
 
@@ -96,7 +89,6 @@ class MemberTable extends AbstractTableGateway
      */
     public function saveMember($member)
     {
-        $this->table = new MemberTable();
         $data = array(
             'login_id'                   => $member->login_id,
             'password'                   => $member->password,
@@ -109,7 +101,7 @@ class MemberTable extends AbstractTableGateway
 
         $loginId = $member->login_id;
         if (!$this->loginIdExists($loginId)) {
-            $this->table->insert($data);
+            $this->insert($data);
         } else {
             throw new \Exception('Fatal error. login_id is already exists.');
         }
@@ -120,7 +112,6 @@ class MemberTable extends AbstractTableGateway
      */
     public function deleteMember($id)
     {
-        $this->table = new MemberTable();
-        $this->table->delete(array('id' => $id));
+        $this->delete(array('id' => $id));
     }
 }
